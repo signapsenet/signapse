@@ -1,0 +1,47 @@
+.flexbox {
+    display: flex;
+    position: relative;
+}
+
+.flexbox.middle {
+    align-items: center;
+}
+
+.flexbox.horizontal {
+    flex-direction: row;
+}
+
+.flexbox.vertical {
+    flex-direction: column;
+}
+
+.flexbox > * {
+    flex: 0 0 auto;
+}
+
+.flexbox.padded > * {
+    padding: 5px;
+}
+
+.flexbox.horizontal > .auto {
+    flex: 1 0;
+}
+
+.flexbox.vertical > .auto {
+    flex: 1 0 auto;
+}
+
+.layout-table {
+    display: table;
+}
+
+.layout-table > .layout-row {
+    display: table-row;
+}
+
+.layout-table .layout-column,
+.layout-table > *:not(.layout-row),
+.layout-table > .layout-row > * {
+    display: table-cell;
+    padding: 2px 3px;
+}

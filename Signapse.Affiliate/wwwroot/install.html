@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="lib/knockout-latest.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        class App {
+            constructor(data) {
+                this.siteName = ko.observable(data.siteName);
+                this.networkName = ko.observable(data.networkName);
+                this.email = ko.observable(data.email);
+                this.password = ko.observable(data.password);
+                this.confirmPassword = ko.observable(data.confirmPassword);
+                this.sendSignapseRequest = ko.observable(data.sendSignapseRequest);
+
+                this.smtp = {
+                    address: ko.observable(data.smtp?.address),
+                    user: ko.observable(data.smtp?.user),
+                    password: ko.observable(data.smtp?.password),
+                    replyTo: ko.observable(data.smtp?.replyTo),
+                };
+            }
+
+            toJS() {
+                return {
+                    siteName: this.siteName(),
+                    networkName: this.networkName(),
+                    email: this.email(),
+                    password: this.password(),
+                    confirmPassword: this.confirmPassword(),
+                    sendSignapseRequest: this.sendSignapseRequest(),
+                    smtp: {
+                        address: this.smtp.address(),
+                        user: this.smtp.user(),
+                        password: this.smtp.password(),
+                        replyTo: this.smtp.replyTo(),
+                    }
+                };
+            }
+
+            install() {
+                api_post('/api/v1/install', this.toJS())
+                    .then(res => {
+                        window.location.replace("index.html");
+                    });
+            }
+        }
+
+        docReady(() => {
+            ko.applyBindings(new App({{{AppData}}}), document.body);
+        });
+    </script>
+</head>
+<body>
+    <form method="post" action="/api/v1/install">
+        <h1>Installation</h1>
+        <h2>Primary Account</h2>
+        <input placeholder="Site Name" data-bind="value: siteName" />
+        <input placeholder="Network Name" data-bind="value: networkName" />
+        <input placeholder="Email" data-bind="value: email" />
+        <input type="password" placeholder="Password" data-bind="value: password" />
+        <input type="password" placeholder="Confirm" data-bind="value: confirmPassword" />
+
+        <h2>Payment Information</h2>
+        <p>
+            Set up an auto-payment source for that will be used to transfer payments to the other affiliates
+        </p>
+        <label><input type="radio" name="trn_source" value="0" /> <span>{{#Translate}}Credit{{/Translate}}</span></label>
+        <label><input type="radio" name="trn_source" value="1" /> <span>{{#Translate}}Debit{{/Translate}}</span></label>
+        <label><input type="radio" name="trn_source" value="2" /> <span>{{#Translate}}Bank{{/Translate}}</span></label>
+
+        <h2>SMTP</h2>
+        <input placeholder="Address" data-bind="value: smtp.address" />
+        <input placeholder="User" data-bind="value: smtp.user" />
+        <input placeholder="Password" data-bind="value: smtp.password" />
+        <input placeholder="Reply-to Email" data-bind="value: smtp.replyTo" />
+
+        <div>
+            <label><input type="checkbox" data-bind="checked: sendSignapseRequest" /> Request Affiliation With Signapse.net</label>
+        </div>
+
+        <button type="submit" data-bind="click: install">Install</button>
+    </form>
+</body>
+</html>

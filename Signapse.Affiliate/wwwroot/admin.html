@@ -1,0 +1,343 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Signapse Administrator</title>
+
+    <link href="css/app.css" rel="stylesheet" type="text/css" />
+    <script src="lib/knockout-latest.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        class App {
+            constructor(data) {
+                this.users = ko.observableArray((data.users || []).map(u => new User(u)));
+                this.affiliates = ko.observableArray((data.affiliates || []).map(a => new Affiliate(a)));
+                this.affiliateRequests = ko.observableArray((data.affiliateRequests || []).map(ar => new AffiliateRequest(ar)));
+                this.affiliateRequestUrl = ko.observable();
+
+                this.affiliateDetails = ko.observable(null);
+                this.apiKey = ko.observable(data.apiKey);
+            }
+
+            toJS() {
+                return {
+                };
+            }
+
+            async generateAPIKey() {
+                const apiKey = await api_get("/api/v1/admin/generateAPIKey");
+                this.apiKey(apiKey);
+            }
+
+            async saveSiteConfig() {
+                await api_put("/api/v1/admin/siteConfig", { apiKey: this.apiKey() });
+            }
+
+            async addAffiliate() {
+                const data = {
+                    url: this.affiliateRequestUrl()
+                };
+
+                const affiliateRequest = await api_put("/api/v1/admin/addAffiliate", data);
+                this.affiliateRequestUrl('');
+
+                this.affiliateRequests.push(affiliateRequest);
+            }
+
+            async getAffiliateDetails() {
+                let url = this.affiliateRequestUrl().replace(/\/$/g, '');
+                if (url.indexOf('http') !== 0) {
+                    url = `http://${url}`;
+                }
+
+                const details = await api_get(`${url}/api/v1/server/desc`);
+                this.affiliateDetails(details);
+            }
+
+            async acceptAllRequests() {
+
+            }
+
+            async rejectAllRequests() {
+
+            }
+        }
+
+        class User {
+            constructor(data) {
+                this.name = ko.observable(data.name);
+                this.email = ko.observable(data.email);
+                this.affiliateNotification = ko.observable(data.affiliateNotification);
+
+                this.auth = {
+                    isSiteAdmin: ko.observable(data.flags),
+                    isUsersAdmin: ko.observable(data.flags),
+                    isAffiliatesAdmin: ko.observable(data.flags),
+                };
+            }
+
+            editUser() {
+
+            }
+
+            async removeUser() {
+
+            }
+        }
+
+        class AffiliateRequest {
+            constructor(data) {
+                Object.assign(this, data);
+            }
+
+            async acceptRequest() {
+
+            }
+
+            async rejectRequest() {
+
+            }
+
+            async removeRequest() {
+
+            }
+        }
+
+        class Affiliate {
+            constructor(data) {
+                this.siteName = data.siteName;
+                this.url = ko.observable(data.url);
+                this.status = ko.observable(data.status);
+            }
+
+            async removeAffiliate() {
+
+            }
+        }
+
+        docReady(() => {
+            ko.applyBindings(new App({{{AppData}}}), document.body);
+        });
+    </script>
+</head>
+<body>
+    <h1>Administration</h1>
+    <h2>Site Configuration</h2>
+    <form method="post" action="/api/v1/admin">
+        <input placeholder="{{#Translate}}API Key{{/Translate}}" data-bind="value: apiKey" value="{{APIKey}}" />
+
+        <button type="submit" name="generateAPIKey" data-bind="click: generateAPIKey">Generate</button>
+        <button type="submit" name="saveSiteConfig" data-bind="click: saveSiteConfig">Save</button>
+    </form>
+
+    <h2>Affiliates</h2>
+    <form method="post" action="/api/v1/admin">
+        <input placeholder="{{#Translate}}Url{{/Translate}}" name="affiliateRequestUrl" data-bind="value: affiliateRequestUrl" />
+        <button type="submit" name="getAffiliateDetails" data-bind="click: getAffiliateDetails">{{#Translate}}Get Details{{/Translate}}</button>
+
+        <div data-bind="with: affiliateDetails">
+            <table>
+                <tbody>
+                    <tr>
+                        <th scope="row">{{#Translate}}ID{{/Translate}}</th>
+                        <td data-bind="text: id"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">{{#Translate}}Name{{/Translate}}</th>
+                        <td data-bind="text: name"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">{{#Translate}}Url{{/Translate}}</th>
+                        <td data-bind="text: uri"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="button" name="addAffiliate" data-bind="click: $parent.addAffiliate">{{#Translate}}Join{{/Translate}}</button>
+        </div>
+    </form>
+
+    <form method="post" action="/api/v1/admin">
+        <button type="submit" name="acceptAllRequests" data-bind="click: acceptAllRequests">Accept All</button>
+        <button type="submit" name="rejectAllRequests" data-bind="click: rejectAllRequests">Reject All</button>
+        <table data-bind="visible: affiliateRequests().length">
+            <caption>{{#Translate}}Affiliate Requests{{/Translate}}</caption>
+            <thead>
+                <tr>
+                    <th scope="col">{{#Translate}}From{{/Translate}}</th>
+                    <th scope="col">{{#Translate}}To{{/Translate}}</th>
+                    <th scope="col">{{#Translate}}Status{{/Translate}}</th>
+                    <th scope="col">{{#Translate}}Actions{{/Translate}}</th>
+                </tr>
+            </thead>
+            <!-- If scripting is disabled, this section will render -->
+            <!-- ko if: false -->
+            <tbody>
+                {{#AffiliateRequests}}
+                <tr>
+                    <td>{{FromSite}}</td>
+                    <td>{{ToSite}}</td>
+                    <td>{{Status}}</td>
+                    <td>
+                        {{#IsRemoteRequest}}
+                        <button type="submit" name="acceptAffiliate">{{#Translate}}Accept{{/Translate}}</button>
+                        <button type="submit" name="rejectAffiliate">{{#Translate}}Reject{{/Translate}}</button>
+                        {{/IsRemoteRequest}}
+                        {{#IsLocalRequest}}
+                        <button type="submit" name="removeAffiliate">{{#Translate}}Remove{{/Translate}}</button>
+                        {{/IsLocalRequest}}
+                    </td>
+                </tr>
+                {{/AffiliateRequests}}
+            </tbody>
+            <!-- /ko -->
+            <tbody class="hidden" data-bind="css: { hidden: false }, foreach: affiliateRequests">
+                <tr>
+                    <td data-bind="text: siteName"></td>
+                    <td data-bind="text: url"></td>
+                    <td data-bind="text: status"></td>
+                    <td>
+                        <button type="button" data-bind="visible: isRemoteRequest, click: acceptRequest">{{#Translate}}Accept{{/Translate}}</button>
+                        <button type="button" data-bind="visible: isRemoteRequest, click: rejectRequest">{{#Translate}}Reject{{/Translate}}</button>
+                        <button type="button" data-bind="visible: isLocalRequest, click: removeRequest">{{#Translate}}Remove{{/Translate}}</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+
+    <form method="post" action="/api/v1/admin">
+        <table data-bind="visible: affiliates().length">
+            <caption>{{#Translate}}Current Affiliates{{/Translate}}</caption>
+            <thead>
+                <tr>
+                    <th scope="col">{{#Translate}}Site{{/Translate}}</th>
+                    <th scope="col">{{#Translate}}Url{{/Translate}}</th>
+                    <th scope="col">{{#Translate}}Status{{/Translate}}</th>
+                    <th scope="col">{{#Translate}}Actions{{/Translate}}</th>
+                </tr>
+            </thead>
+            <!-- ko if: false -->
+            <tbody>
+                {{#Affiliates}}
+                <tr>
+                    <td>{{SiteName}}</td>
+                    <td>{{Url}}</td>
+                    <td>{{Status}}</td>
+                    <td>
+                        <button type="submit" name="removeAffiliate">{{#Translate}}Remove{{/Translate}}</button>
+                    </td>
+                </tr>
+                {{/Affiliates}}
+            </tbody>
+            <!-- /ko -->
+            <tbody class="hidden" data-bind="css: { hidden: false }, foreach: affiliates">
+                <tr>
+                    <td data-bind="text: siteName"></td>
+                    <td data-bind="text: url"></td>
+                    <td data-bind="text: status"></td>
+                    <td>
+                        <button type="submit" name="removeAffiliate">{{#Translate}}Remove{{/Translate}}</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+
+    <h2>Users</h2>
+    <form method="post" action="/api/v1/admin">
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">{{#Translate}}Name{{/Translate}}</th>
+                    <th scope="col">{{#Translate}}Email{{/Translate}}</th>
+                    <th scope="col">{{#Translate}}Notification{{/Translate}}</th>
+                    <th scope="col">{{#Translate}}Admin Flags{{/Translate}}</th>
+                    <th scope="col">{{#Translate}}Actions{{/Translate}}</th>
+                </tr>
+                <tr>
+                    <td><input placeholder="{{#Translate}}Name{{/Translate}}" /></td>
+                    <td><input placeholder="{{#Translate}}Email{{/Translate}}" /></td>
+                    <td>
+                        <label><input type="checkbox" /> <span>{{#Translate}}Affiliate Notifications{{/Translate}}</span></label>
+                    </td>
+                    <td>
+                        <label><input type="checkbox" /> <span>{{#Translate}}Site{{/Translate}}</span></label>
+                        <label><input type="checkbox" /> <span>{{#Translate}}Users{{/Translate}}</span></label>
+                        <label><input type="checkbox" /> <span>{{#Translate}}Affiliates{{/Translate}}</span></label>
+                    </td>
+                    <td><button type="submit" name="addUser">{{#Translate}}Add User{{/Translate}}</button></td>
+                </tr>
+            </thead>
+            <!-- ko if: false -->
+            <tbody>
+                {{#Users}}
+                <tr>
+                    <td>{{Name}}</td>
+                    <td>{{Email}}</td>
+                    <td>
+                        <label>
+                            <input type="checkbox" readonly {{#AffiliateNotification}} checked{{/AffiliateNotification}} />
+                            <span>{{#Translate}}Affiliate Notifications{{/Translate}}</span>
+                        </label>
+                    </td>
+                    <td>
+                        <label>
+                            <input type="checkbox" readonly {{#Auth.IsSiteAdmin}} checked{{/Auth.IsSiteAdmin}} />
+                            <span>{{#Translate}}Site{{/Translate}}</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" readonly {{#Auth.IsUsersAdmin}} checked{{/Auth.IsUsersAdmin}} />
+                            <span>{{#Translate}}Users{{/Translate}}</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" readonly {{#Auth.IsAffiliatesAdmin}} checked{{/Auth.IsAffiliatesAdmin}} />
+                            <span>{{#Translate}}Affiliates{{/Translate}}</span>
+                        </label>
+                    </td>
+                    <td>
+                        <button type="submit" name="editUser">{{#Translate}}Edit{{/Translate}}</button>
+                        <button type="submit" name="removeUser">{{#Translate}}Remove{{/Translate}}</button>
+                    </td>
+                </tr>
+                {{/Users}}
+            </tbody>
+            <!-- /ko -->
+            <tbody class="hidden" data-bind="css: { hidden: false }, foreach: users">
+                <tr>
+                    <td data-bind="text: name"></td>
+                    <td data-bind="text: email"></td>
+                    <td>
+                        <label>
+                            <input type="checkbox" readonly data-bind="checked: affiliateNotification" />
+                            <span>{{#Translate}}Affiliate Notifications{{/Translate}}</span>
+                        </label>
+                    </td>
+                    <td data-bind="with: auth">
+                        <label>
+                            <input type="checkbox" readonly data-bind="checked: isSiteAdmin" />
+                            <span>{{#Translate}}Site{{/Translate}}</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" readonly data-bind="checked: isUsersAdmin" />
+                            <span>{{#Translate}}Users{{/Translate}}</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" readonly data-bind="checked: isAffiliatesAdmin" />
+                            <span>{{#Translate}}Affiliates{{/Translate}}</span>
+                        </label>
+                    </td>
+                    <td>
+                        <button type="button" data-bind="click: editUser">{{#Translate}}Edit{{/Translate}}</button>
+                        <button type="button" data-bind="click: removeUser">{{#Translate}}Remove{{/Translate}}</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+
+    <h2>Ledger</h2>
+    <form method="post" action="/api/v1/addUser">
+    </form>
+</body>
+</html>

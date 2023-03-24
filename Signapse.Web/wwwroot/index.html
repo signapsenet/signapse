@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+
+    <title></title>
+    <link rel="stylesheet" href="css/flexbox.css" type="text/css" />
+
+    <script src="lib/knockout-latest.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/index.js"></script>
+
+    <script>
+        docReady(() => {
+            ko.applyBindings(new App({{{AppData}}}), document.body);
+        });
+    </script>
+
+    <style>
+        .hidden {
+            display: none;
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+    <h1>Signapse.net</h1>
+
+    <h2>Sign In</h2>
+    <div data-bind="hidden: isAuthenticated">
+        <input placeholder="Email" data-bind="value: email" />
+        <input type="password" placeholder="Password" data-bind="value: password" />
+        <button type="button" data-bind="click: login">Login</button>
+
+        <ul class="affiliate-links flexbox vertical" data-bind="foreach: affiliates">
+            <li class="flexbox horizontal middle" role="button" data-bind="monitorAuth, click: signIn">
+                <img class="logo" width="32" height="32" data-bind="attr: { src: logoUrl }" />
+                <span data-bind="text: title"></span>
+            </li>
+        </ul>
+
+        <div data-bind="foreach: affiliates">
+            <!-- ko if: loginUrl -->
+            <iframe id="login_iframe" data-bind="attr: { src: loginUrl }"></iframe>
+            <!-- /ko -->
+        </div>
+
+    </div>
+
+    <div data-bind="visible: isAuthenticated">
+        <button type="button" data-bind="click: logout">Logout</button>
+    </div>
+
+    <h2>Current Posts</h2>
+    <ul class="all-posts" data-bind="foreach: posts" style="list-style-type: none; padding-left: 0">
+        <li class="post flexbox horizontal" role="button" data-bind="click: openPost">
+            <img class="preview" width="128" height="96" data-bind="attr: { src: previewImage }" />
+            <div class="flexbox vertical padded auto">
+                <h3 style="margin: 0" data-bind="text: title"></h3>
+                <p style="margin: 0" class="auto" data-bind="text: description"></p>
+            </div>
+        </li>
+    </ul>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Signapse.BlockChainTests": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:63131;http://localhost:63132"
+    }
+  }
+}
