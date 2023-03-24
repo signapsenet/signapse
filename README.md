@@ -1,6 +1,6 @@
 # Signapse.net
 
-==**WARNING: This project is still a proof-of-concept. You should not under any circumstances attempt to use this in a production environment in its current state**==
+***`WARNING: This project is still a proof-of-concept. You should not under any circumstances attempt to use this in a production environment in its current state`***
 
 Signapse is a protocol for a collection of like-minded sites to share content and revenue.  The goals of this project are as follows:
 
@@ -73,7 +73,7 @@ This will result in a one-directional system where Alice keeps the "advertisemen
 
 ### 3. Joe doesn't create any content and is only using his affiliation with Alice for "passive income"
 
-Similar to the prior scenario, this will create a unidirectional system where Joe's members consume Alice's content. In this case, Joe would keep the "advertisement" portion of each member's time and pay the rest to Alice. And like the prior scenario, Alice can choose whether to remain affiliated with Joe.
+Similar to the prior scenario, this will create a unidirectional system where Joe's members consume Alice's content. In this case, Joe would keep the "advertisement" portion of each member's time and pay the rest to Alice. And like the prior scenario, Alice can choose whether to remain affiliated with Joe. (*NOTE*: this is how affiliation with signapse.net works)
 
 ### 4. Joe simulates requests from one of Alice's members.
 
