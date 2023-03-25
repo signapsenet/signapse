@@ -111,7 +111,7 @@ namespace Signapse.Middleware
             {
                 if (appConfig.IsInstalled()
                     && contextAccessor.HttpContext != null
-                    && db.Items.FirstOrDefault(it => it.ID.Equals(Guid.Empty)) is Data.User adminUser)
+                    && db.Items.FirstOrDefault(it => it.ID.Equals(Data.User.PrimaryAdminGU)) is Data.User adminUser)
                 {
                     _ = emailProvider.SendVerification(adminUser);
                     await contextAccessor.HttpContext.SignInAsync(Claims.CreatePrincipal(adminUser, "cookie"));

@@ -1,7 +1,7 @@
 ﻿using Signapse.Services;
 using System;
 
-namespace Signapse.Server.Common.Services
+namespace Signapse.Server.Web.Services
 {
     public class WebServerConfig
     {

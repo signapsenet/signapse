@@ -17,7 +17,7 @@ namespace Signapse.Server.Tests
     /// <summary>
     /// This is the intermediate location for the final server design
     /// </summary>
-    public class TestServer : AffiliateServer
+    public class TestServer : LocalAffiliateServer
     {
         readonly JsonDatabase<SignapseServerDescriptor> dbAffiliates;
 
@@ -41,22 +41,22 @@ namespace Signapse.Server.Tests
         List<AffiliateJoinRequest> joinRequests = new List<AffiliateJoinRequest>();
         protected override void ConfigureEndpoints(WebApplication app)
         {
-            //app.MapPost("/api/v1/login", async ctx =>
-            //{
-            //    var db = ctx.RequestServices.GetRequiredService<JsonDatabase<Data.User>>();
-            //    var loginParams = await ctx.Request.ReadFromJsonAsync<Data.User>()
-            //        ?? throw new Exceptions.HttpBadRequest("Invalid Parameters");
+            app.MapPost("/api/v1/login", async ctx =>
+            {
+                var db = ctx.RequestServices.GetRequiredService<JsonDatabase<Data.User>>();
+                var loginParams = await ctx.Request.ReadFromJsonAsync<Data.User>()
+                    ?? throw new Exceptions.HttpBadRequest("Invalid Parameters");
 
-            //    var adminUser = db.Items
-            //        .Where(it => it.Email == loginParams.Email)
-            //        .Where(it => it.Password == loginParams.Password)
-            //        .FirstOrDefault();
+                var adminUser = db.Items
+                    .Where(it => it.Email == loginParams.Email)
+                    .Where(it => it.Password == loginParams.Password)
+                    .FirstOrDefault();
 
-            //    if (adminUser != null)
-            //    {
-            //        await ctx.SignInAsync("cookie", Claims.CreatePrincipal(adminUser, "cookie"));
-            //    }
-            //});
+                if (adminUser != null)
+                {
+                    await ctx.SignInAsync("cookie", Claims.CreatePrincipal(adminUser, "cookie"));
+                }
+            });
 
             //app.MapPut("/api/v1/join", async ctx =>
             //{
@@ -73,7 +73,7 @@ namespace Signapse.Server.Tests
 
             //app.MapPost("/api/v1/join", async ctx =>
             //{
-            //    var request = await ctx.Request.ReadFromJsonAsync<WebRequest<AffiliateDescriptor>>();
+            //    var request = await ctx.Request.ReadFromJsonAsync<WebRequest<SignapseServerDescriptor>>();
             //    var descriptor = request?.Data;
 
             //    if (descriptor != null)

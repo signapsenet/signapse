@@ -13,6 +13,7 @@ using Signapse.Server.Common;
 using Signapse.Server.Common.Services;
 using Signapse.Server.Extensions;
 using Signapse.Server.Middleware;
+using Signapse.Server.Web.Services;
 using Signapse.Services;
 using System.Linq;
 using System.Net.Http;
@@ -89,8 +90,8 @@ namespace Signapse.Server.Web
                 await next(context);
             });
 
+            app.UseDefaultPath("index.html");
             app.UseDefaultFiles();
-            app.UseMustacheTemplates();
             app.UseStaticFiles();
 
             app.UseSignapseOpenAuth();

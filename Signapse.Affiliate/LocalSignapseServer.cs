@@ -3,6 +3,7 @@ using Signapse.Middleware;
 using Signapse.Server;
 using Signapse.Server.Affiliate;
 using Signapse.Server.Middleware;
+using System.Linq;
 using System.Net.Http;
 
 namespace Signapse
@@ -16,6 +17,10 @@ namespace Signapse
         protected override void ConfigureEndpoints(WebApplication app)
         {
             base.ConfigureEndpoints(app);
+
+            // TODO: Use the new mustache template mapping
+            //app.MapMustacheEndpoint<IndexDataModel>("/index.html", config => { });
+            //app.UseMustacheTemplates();
 
             app.MapWebRequestHandler<InstallPageHandler, InstallDataModel>(HttpMethod.Post, "/api/v1/install", (handler, installData) => handler.ProcessInstallation(installData));
 

@@ -20,7 +20,10 @@ namespace Signapse.Web
         {
             base.ConfigureEndpoints(app);
 
-            app.MapWebRequestHandler<IndexPageHandler, LoginRequestData>(HttpMethod.Post, "/api/v1/login", (handler, user) => handler.ProcessLogin(user));
+            // TODO: Replace this with our actual index.html, and move all content to common embedded resources
+            app.MapMustacheEndpoint<IndexPageData>("/index.html");
+
+            app.UseMustacheTemplates();
         }
     }
 }

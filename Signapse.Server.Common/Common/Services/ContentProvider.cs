@@ -2,6 +2,7 @@
 using Signapse.BlockChain.Transactions;
 using Signapse.Client;
 using Signapse.Data;
+using Signapse.Server.Web.Services;
 using Signapse.Services;
 using System;
 using System.Collections;

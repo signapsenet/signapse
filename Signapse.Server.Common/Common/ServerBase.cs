@@ -17,6 +17,7 @@ using Signapse.Services;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -50,6 +51,7 @@ namespace Signapse.Server.Common
         public ServerBase(string[] args, bool anyPort = true)
         {
             var builder = WebApplication.CreateBuilder(args);
+
             if (anyPort)
             {
                 builder.WebHost
@@ -104,7 +106,9 @@ namespace Signapse.Server.Common
             if ((webApp as IApplicationBuilder)?.ServerFeatures is FeatureCollection features
                 && features.Get<IServerAddressesFeature>() is IServerAddressesFeature addrFeature)
             {
-                ServerUri = new Uri(addrFeature.Addresses.First());
+                ServerUri = new Uri(addrFeature.Addresses
+                    .OrderBy(a => a.StartsWith("https:") ? 0 : 1)
+                    .First());
             }
         }
 

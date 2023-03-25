@@ -120,8 +120,8 @@ namespace Signapse.Server.Affiliate
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseDefaultPath("index.html");
             app.UseDefaultFiles();
-            app.UseMustacheTemplates();
             app.UseStaticFiles();
 
             app.UseSignapseOpenAuth();

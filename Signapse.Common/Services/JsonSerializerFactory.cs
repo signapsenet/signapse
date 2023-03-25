@@ -40,6 +40,15 @@ namespace Signapse.Services
             }
         }
 
+        public object? Deserialize(Type type, string json)
+        {
+            try
+            {
+                return JsonSerializer.Deserialize(json, type, this.Options);
+            }
+            catch { return null; }
+        }
+
         public T? Deserialize<T>(string json)
         {
             try
