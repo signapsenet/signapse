@@ -2,14 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Signapse.Data;
 using Signapse.RequestData;
 using Signapse.Server.Common.Services;
 using Signapse.Server.Middleware;
 using Signapse.Services;
 using System;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Signapse.Middleware
@@ -20,10 +18,10 @@ namespace Signapse.Middleware
     [DataFor("/index.html")]
     public class IndexData : AffiliateMustacheData
     {
-        readonly AppConfig appConfig;
+        private readonly AppConfig appConfig;
 
         public IndexData(AppConfig appConfig, IHttpContextAccessor acc, JsonDatabase<Data.User> db, AuthorizationFactory authFactory)
-            :base(acc, db, authFactory)
+            : base(acc, db, authFactory)
         {
             this.appConfig = appConfig;
 
@@ -56,9 +54,9 @@ namespace Signapse.Middleware
     /// </summary>
     public class IndexPageHandler
     {
-        readonly JsonDatabase<Data.User> db;
-        readonly PasswordHasher<Data.User> hasher;
-        readonly IHttpContextAccessor contextAccessor;
+        private readonly JsonDatabase<Data.User> db;
+        private readonly PasswordHasher<Data.User> hasher;
+        private readonly IHttpContextAccessor contextAccessor;
 
         public IndexPageHandler(IHttpContextAccessor contextAccessor, JsonDatabase<Data.User> db, PasswordHasher<Data.User> hasher)
         {

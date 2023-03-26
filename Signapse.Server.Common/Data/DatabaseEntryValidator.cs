@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Signapse.Services;
+﻿using Signapse.Services;
 using System;
 using System.Security.Claims;
 
@@ -16,8 +15,8 @@ namespace Signapse.Data
     public class DatabaseEntryValidator<TEntry> : IDatabaseEntryValidator
         where TEntry : class, IDatabaseEntry
     {
-        readonly protected IAuthResults authResults;
-        readonly protected ClaimsPrincipal user;
+        protected readonly IAuthResults authResults;
+        protected readonly ClaimsPrincipal user;
 
         public DatabaseEntryValidator(ClaimsPrincipal user, IAuthResults authResults)
         {
@@ -25,7 +24,7 @@ namespace Signapse.Data
             this.authResults = authResults;
         }
 
-        virtual public bool ValidateInsert(TEntry item)
+        public virtual bool ValidateInsert(TEntry item)
         {
             if (authResults.IsUsersAdmin)
             {
@@ -34,7 +33,7 @@ namespace Signapse.Data
             else throw new Exceptions.HttpUnauthorized();
         }
 
-        virtual public bool ValidateDelete(TEntry item)
+        public virtual bool ValidateDelete(TEntry item)
         {
             if (authResults.IsAuthorized
                 && (item.ID == user.SignapseUserID()
@@ -45,7 +44,7 @@ namespace Signapse.Data
             else throw new Exceptions.HttpUnauthorized();
         }
 
-        virtual public bool ValidateUpdate(TEntry item)
+        public virtual bool ValidateUpdate(TEntry item)
         {
             if (authResults.IsAuthorized
                 && (item.ID == user.SignapseUserID()
@@ -56,7 +55,7 @@ namespace Signapse.Data
             else throw new Exceptions.HttpUnauthorized();
         }
 
-        virtual public bool ValidateRead(TEntry item) => true;
+        public virtual bool ValidateRead(TEntry item) => true;
 
         bool IDatabaseEntryValidator.ValidateDelete<T>(T item)
             => this.ValidateDelete(item as TEntry ?? throw new ArgumentException());

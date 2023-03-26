@@ -1,26 +1,22 @@
 ﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Signapse.Server;
 using Signapse.Server.Common.Services;
 using Signapse.Services;
 using System.Net;
-using System.Security.Claims;
 
 namespace Signapse.Tests
 {
-    class MockJsonDatabaseWebApp : MockWebApp
+    internal class MockJsonDatabaseWebApp : MockWebApp
     {
         public MockJsonDatabaseWebApp(Action<IServiceCollection>? services = null, Action<WebApplication>? app = null)
             : base(s => InitServices(s, services), a => InitApplication(a, app))
         {
         }
 
-        static void InitServices(IServiceCollection services, Action<IServiceCollection>? additional)
+        private static void InitServices(IServiceCollection services, Action<IServiceCollection>? additional)
         {
             services.AddAuthentication("cookie")
                 .AddCookie("cookie", opts =>
@@ -50,7 +46,7 @@ namespace Signapse.Tests
             additional?.Invoke(services);
         }
 
-        static void InitApplication(WebApplication app, Action<WebApplication>? additional)
+        private static void InitApplication(WebApplication app, Action<WebApplication>? additional)
         {
             app.UseAuthentication();
             app.UseAuthorization();

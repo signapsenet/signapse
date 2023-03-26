@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Signapse.Server.Middleware
 {
-    static public class RequestHandlerExtensions
+    public static class RequestHandlerExtensions
     {
-        static public IEndpointConventionBuilder MapAffiliateRequestHandler<THandler, TRequest>(
+        public static IEndpointConventionBuilder MapAffiliateRequestHandler<THandler, TRequest>(
             this WebApplication app,
             HttpMethod method,
             string absPath,
@@ -22,7 +22,7 @@ namespace Signapse.Server.Middleware
             return app.MapRequestHandler(method, absPath, process);
         }
 
-        static public IEndpointConventionBuilder MapAffiliateRequestHandler<THandler, TRequest>(
+        public static IEndpointConventionBuilder MapAffiliateRequestHandler<THandler, TRequest>(
             this WebApplication app,
             HttpMethod method,
             string absPath,
@@ -32,7 +32,7 @@ namespace Signapse.Server.Middleware
             return app.MapRequestHandler(method, absPath, process);
         }
 
-        static public IEndpointConventionBuilder MapWebRequestHandler<THandler, TRequest>(
+        public static IEndpointConventionBuilder MapWebRequestHandler<THandler, TRequest>(
             this WebApplication app,
             HttpMethod method,
             string absPath,
@@ -42,7 +42,7 @@ namespace Signapse.Server.Middleware
             return app.MapRequestHandler(method, absPath, process);
         }
 
-        static public IEndpointConventionBuilder MapWebRequestHandler<THandler, TRequest>(
+        public static IEndpointConventionBuilder MapWebRequestHandler<THandler, TRequest>(
             this WebApplication app,
             HttpMethod method,
             string absPath,
@@ -52,7 +52,7 @@ namespace Signapse.Server.Middleware
             return app.MapRequestHandler(method, absPath, process);
         }
 
-        static public IEndpointConventionBuilder MapWebServerRequestHandler<THandler, TRequest>(
+        public static IEndpointConventionBuilder MapWebServerRequestHandler<THandler, TRequest>(
             this WebApplication app,
             HttpMethod method,
             string absPath,
@@ -62,7 +62,7 @@ namespace Signapse.Server.Middleware
             return app.MapRequestHandler(method, absPath, process);
         }
 
-        static public IEndpointConventionBuilder MapWebServerRequestHandler<THandler, TRequest>(
+        public static IEndpointConventionBuilder MapWebServerRequestHandler<THandler, TRequest>(
             this WebApplication app,
             HttpMethod method,
             string absPath,
@@ -72,7 +72,7 @@ namespace Signapse.Server.Middleware
             return app.MapRequestHandler(method, absPath, process);
         }
 
-        static private IEndpointConventionBuilder MapRequestHandler<THandler, TRequest>(this WebApplication app, HttpMethod method, string absPath, Func<THandler, TRequest, Task> process)
+        private static IEndpointConventionBuilder MapRequestHandler<THandler, TRequest>(this WebApplication app, HttpMethod method, string absPath, Func<THandler, TRequest, Task> process)
         {
             if (method.Equals(HttpMethod.Get))
                 return app.MapGet(absPath, handleRequest);
@@ -110,7 +110,7 @@ namespace Signapse.Server.Middleware
             };
         }
 
-        static private IEndpointConventionBuilder MapRequestHandler<THandler>(this WebApplication app, HttpMethod method, string absPath, Func<THandler, Task> process)
+        private static IEndpointConventionBuilder MapRequestHandler<THandler>(this WebApplication app, HttpMethod method, string absPath, Func<THandler, Task> process)
         {
             if (method.Equals(HttpMethod.Get))
                 return app.MapGet(absPath, handleRequest);

@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Signapse.Middleware;
-using Signapse.Server;
 using Signapse.Server.Affiliate;
 using Signapse.Server.Middleware;
-using System.Linq;
 using System.Net.Http;
 
 namespace Signapse

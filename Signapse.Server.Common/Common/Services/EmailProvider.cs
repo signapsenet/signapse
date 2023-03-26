@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -17,8 +15,8 @@ namespace Signapse.Services
 
     public class EmailProvider : IDisposable
     {
-        readonly AppConfig appConfig;
-        readonly CancellationTokenSource ctSource = new CancellationTokenSource();
+        private readonly AppConfig appConfig;
+        private readonly CancellationTokenSource ctSource = new CancellationTokenSource();
 
         public EmailProvider(AppConfig appConfig)
         {

@@ -1,21 +1,13 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Signapse.BlockChain;
 using Signapse.BlockChain.Transactions;
 using Signapse.Server.Web.Services;
 using Signapse.Services;
 using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
 using System.Threading;
-using System.Threading.Tasks.Dataflow;
 
 namespace Signapse.Web
 {
@@ -39,7 +31,7 @@ namespace Signapse.Web
         }
 
 #if DEBUG
-        static void InitTestServers(WebServerConfig webConfig, Uri webServerUri, CancellationToken token)
+        private static void InitTestServers(WebServerConfig webConfig, Uri webServerUri, CancellationToken token)
         {
             var signapseServer = new TestSignapseServer();
             signapseServer.Run(token);
@@ -81,7 +73,7 @@ namespace Signapse.Web
             }
         }
 
-        static SignapseLedger CreateTestLedger(List<TestWebServer> webServers)
+        private static SignapseLedger CreateTestLedger(List<TestWebServer> webServers)
         {
             SignapseLedger res = new SignapseLedger();
 
@@ -120,7 +112,7 @@ namespace Signapse.Web
             return res;
         }
 
-        static void AddMember(WebApplication webApp, string email)
+        private static void AddMember(WebApplication webApp, string email)
         {
             const string PASSWORD = "password";
 

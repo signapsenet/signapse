@@ -1,17 +1,11 @@
 ﻿using Signapse.BlockChain;
-using Signapse.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AffiliateSim.Services
 {
     internal class LedgerManager
     {
-        readonly Dictionary<Guid, SignapseLedger> ledgers = new Dictionary<Guid, SignapseLedger>();
-        readonly IServiceProvider provider;
+        private readonly Dictionary<Guid, SignapseLedger> ledgers = new Dictionary<Guid, SignapseLedger>();
+        private readonly IServiceProvider provider;
 
         public LedgerManager(IServiceProvider provider)
         {

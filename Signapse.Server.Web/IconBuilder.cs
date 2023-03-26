@@ -1,9 +1,9 @@
-﻿using System.Drawing;
-using System;
+﻿using System;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using System.Drawing.Imaging;
 
 namespace Signapse.Web
 {
@@ -15,11 +15,11 @@ namespace Signapse.Web
             using var ms = new MemoryStream();
 
             bmp.Save(ms, ImageFormat.Png);
-            
+
             return ms.ToArray();
         }
 
-        readonly static Color[] ColorTints = {
+        private static readonly Color[] ColorTints = {
             Color.AliceBlue,
             Color.OrangeRed,
             Color.RebeccaPurple,
@@ -29,7 +29,8 @@ namespace Signapse.Web
             Color.LightBlue,
             Color.Coral
         };
-        static Bitmap GenerateGravatar(string email, int size)
+
+        private static Bitmap GenerateGravatar(string email, int size)
         {
             // Convert the email address to its lowercase form and trim any leading or trailing whitespace.
             string emailHash = ComputeEmailHash(email);
@@ -92,7 +93,7 @@ namespace Signapse.Web
             return bitmap;
         }
 
-        static void SaveImage(Bitmap image, string fileName, ImageFormat format)
+        private static void SaveImage(Bitmap image, string fileName, ImageFormat format)
         {
             // Step 5: Display the image to the user or save it to a file.
             using (FileStream stream = new FileStream(fileName, FileMode.Create))
@@ -101,7 +102,7 @@ namespace Signapse.Web
             }
         }
 
-        static string ComputeEmailHash(string email)
+        private static string ComputeEmailHash(string email)
         {
             // Step 1: Convert the email address to its lowercase form and trim any leading or trailing whitespace.
             email = email.ToLower().Trim();
@@ -123,7 +124,7 @@ namespace Signapse.Web
         }
     }
 
-    class PerlinNoise
+    internal class PerlinNoise
     {
         private int[] permutation;
         private double[] gradientsX;
@@ -222,7 +223,7 @@ namespace Signapse.Web
             // Normalize the result between 0 and 1
             return Math.Abs((result + 1) * NormalizationFactor);
         }
-        
-        readonly static double NormalizationFactor = 1 / (2 * Math.Sqrt(3));
+
+        private static readonly double NormalizationFactor = 1 / (2 * Math.Sqrt(3));
     }
 }

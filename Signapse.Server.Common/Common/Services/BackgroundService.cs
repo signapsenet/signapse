@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace Signapse.Services
 {
-    abstract public class BackgroundService : IDisposable
+    public abstract class BackgroundService : IDisposable
     {
-        Thread? thread = null;
-        CancellationTokenSource ctSource = new CancellationTokenSource();
-        ManualResetEvent startupCompleted = new ManualResetEvent(false);
+        private Thread? thread = null;
+        private CancellationTokenSource ctSource = new CancellationTokenSource();
+        private ManualResetEvent startupCompleted = new ManualResetEvent(false);
 
         public BackgroundService()
         {
@@ -18,7 +18,7 @@ namespace Signapse.Services
         /// <summary>
         /// Perform the inner loop
         /// </summary>
-        abstract protected Task DoWork(CancellationToken token);
+        protected abstract Task DoWork(CancellationToken token);
 
         public void Start()
         {

@@ -3,18 +3,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
 using Mustache;
-using Signapse.Data;
 using Signapse.Exceptions;
-using Signapse.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security.Claims;
-using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
@@ -52,22 +47,22 @@ namespace Signapse.Server.Middleware
         public Type BaseDataType { get; set; } = typeof(MustacheData);
     }
 
-    static public class MustacheExtensions
+    public static class MustacheExtensions
     {
-        class MustacheDescriptor
+        private class MustacheDescriptor
         {
-            readonly public Template template;
-            readonly public Type dataType;
-            readonly public string contentType;
+            public readonly Template template;
+            public readonly Type dataType;
+            public readonly string contentType;
 
             public MustacheDescriptor(Template template, Type dataType, string contentType)
                 => (this.template, this.dataType, this.contentType) = (template, dataType, contentType);
         }
 
-        static public IApplicationBuilder UseMustacheTemplates(this IApplicationBuilder app)
+        public static IApplicationBuilder UseMustacheTemplates(this IApplicationBuilder app)
             => app.UseMustacheTemplates(options => { });
 
-        static public IApplicationBuilder UseMustacheTemplates(this IApplicationBuilder app, Action<MustacheOptions> config)
+        public static IApplicationBuilder UseMustacheTemplates(this IApplicationBuilder app, Action<MustacheOptions> config)
         {
             Dictionary<string, MustacheDescriptor> templates = new Dictionary<string, MustacheDescriptor>();
 

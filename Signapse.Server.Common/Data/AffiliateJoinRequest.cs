@@ -24,7 +24,7 @@ namespace Signapse.Server
 
     public class AffiliateJoinRequestValidator : DatabaseEntryValidator<AffiliateJoinRequest>
     {
-        SignapseServerDescriptor affiliateDesc;
+        private SignapseServerDescriptor affiliateDesc;
 
         public AffiliateJoinRequestValidator(ClaimsPrincipal user, IAuthResults authResults, SignapseServerDescriptor self) : base(user, authResults)
         {

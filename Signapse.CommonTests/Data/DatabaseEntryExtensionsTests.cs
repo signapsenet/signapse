@@ -1,12 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Signapse.Data;
 using Signapse.Services;
 using Signapse.Test;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Signapse.Data.Tests
 {
@@ -23,7 +17,7 @@ namespace Signapse.Data.Tests
             Assert.AreEqual(expectedJson, securedPolicy);
         }
 
-        static public IEnumerable<object[]> MatchingUserPolicies
+        public static IEnumerable<object[]> MatchingUserPolicies
         {
             get
             {

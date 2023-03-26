@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Net.Http;
 
 namespace Signapse.Tests
 {
-    abstract public class WebAppTestClass
+    public abstract class WebAppTestClass
     {
-        CancellationTokenSource ctSource;
-        WebApplicationBuilder builder;
-        WebApplication app;
+        private CancellationTokenSource ctSource;
+        private WebApplicationBuilder builder;
+        private WebApplication app;
 
         protected WebAppTestClass()
         {
@@ -18,11 +17,11 @@ namespace Signapse.Tests
             app = builder.Build();
         }
 
-        virtual protected void InitServices(IServiceCollection services)
+        protected virtual void InitServices(IServiceCollection services)
         {
         }
 
-        virtual protected void InitApplication(WebApplication app)
+        protected virtual void InitApplication(WebApplication app)
         {
         }
 
@@ -53,8 +52,8 @@ namespace Signapse.Tests
 
     public class WebAppConnection : IDisposable
     {
-        readonly IServiceScope scope;
-        
+        private readonly IServiceScope scope;
+
         public WebAppConnection(IServiceScope scope)
         {
             this.scope = scope;

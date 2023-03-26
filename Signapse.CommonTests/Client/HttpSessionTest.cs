@@ -5,19 +5,19 @@ using Signapse.Server.Web.Services;
 
 namespace Signapse.Client.Tests
 {
-    abstract public class HttpSessionTest<T>
+    public abstract class HttpSessionTest<T>
         where T : HttpSession
     {
         protected const string API_KEY = "api_key";
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        CancellationTokenSource ctSource;
+        private CancellationTokenSource ctSource;
         protected TestWebServer webServer;
         protected TestAffiliateServer affiliateServer;
         protected T session;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-        abstract protected T CreateSession();
+        protected abstract T CreateSession();
 
         [TestInitialize]
         public void Initialize()
@@ -50,5 +50,5 @@ namespace Signapse.Client.Tests
             affiliateServer.Dispose();
             ctSource.Dispose();
         }
-   }
+    }
 }

@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Signapse.Web
 {
-    class TestWebServer : WebServer
+    internal class TestWebServer : WebServer
     {
-        readonly public TestSignapseServer signapseServer;
+        public readonly TestSignapseServer signapseServer;
         public WebApplication WebApp => this.webApp;
 
         public TestWebServer(string[] args) : base(args, true)
@@ -50,7 +50,7 @@ namespace Signapse.Web
             async Task getLogo(HttpContext context, IconBuilder builder)
             {
                 var data = builder.LogoImageData(this.ServerUri.ToString());
-                
+
                 context.Response.ContentType = "image/png";
                 await context.Response.Body.WriteAsync(data);
             }

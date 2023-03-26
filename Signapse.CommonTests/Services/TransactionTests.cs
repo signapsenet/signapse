@@ -1,15 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Signapse.Data;
-using Signapse.Services;
 using Signapse.Test;
 using Signapse.Tests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
 
 namespace Signapse.Services.Tests
 {
@@ -112,7 +105,7 @@ namespace Signapse.Services.Tests
             using (var transaction = new Transaction<TestData>(db))
             {
                 transaction.Insert(new TestData());
-                
+
                 Assert.IsNotNull(transaction[Guid.Empty]);
                 Assert.AreEqual(1, transaction.Count());
             }
@@ -127,7 +120,7 @@ namespace Signapse.Services.Tests
             {
                 transaction.Insert(new TestData());
                 transaction.Delete(Guid.Empty);
-                
+
                 Assert.IsNull(transaction[Guid.Empty]);
                 Assert.AreEqual(0, transaction.Count());
             }
@@ -150,7 +143,7 @@ namespace Signapse.Services.Tests
             Assert.AreEqual(1, db.Items[0].Value);
         }
 
-        class TestData : IDatabaseEntry
+        private class TestData : IDatabaseEntry
         {
             public Guid ID { get; set; } = Guid.Empty;
             public int Value { get; set; } = 0;

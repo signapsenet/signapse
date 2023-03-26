@@ -10,13 +10,11 @@ namespace Signapse.Services
     public class Transaction<T> : IDisposable, IEnumerable<T>
         where T : class, IDatabaseEntry
     {
-        readonly JsonDatabase<T> db;
-
-        bool commitChanges = true;
-        
-        List<T> inserted = new List<T>();
-        HashSet<Guid> deleted = new HashSet<Guid>();
-        Dictionary<Guid, T> updated = new Dictionary<Guid, T>();
+        private readonly JsonDatabase<T> db;
+        private bool commitChanges = true;
+        private List<T> inserted = new List<T>();
+        private HashSet<Guid> deleted = new HashSet<Guid>();
+        private Dictionary<Guid, T> updated = new Dictionary<Guid, T>();
 
         public Transaction(JsonDatabase<T> db)
         {

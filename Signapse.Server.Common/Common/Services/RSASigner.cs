@@ -14,9 +14,9 @@ namespace Signapse.Services
 {
     public class RSASigner
     {
-        readonly ISecureStorage storage;
-        readonly RSAParameters rsaParameters;
-        readonly JsonSerializerFactory jsonFactory;
+        private readonly ISecureStorage storage;
+        private readonly RSAParameters rsaParameters;
+        private readonly JsonSerializerFactory jsonFactory;
 
         public RSAParameters PublicKey { get; }
 

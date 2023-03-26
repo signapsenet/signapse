@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Signapse.BlockChain.Transactions;
+using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Signapse.BlockChain.Transactions;
 
 namespace Signapse.BlockChain
 {
     public class TransactionConverter : JsonConverter<ITransaction>
     {
-        class TransactionShell : ITransaction
+        private class TransactionShell : ITransaction
         {
             public TransactionType TransactionType { get; set; }
         }

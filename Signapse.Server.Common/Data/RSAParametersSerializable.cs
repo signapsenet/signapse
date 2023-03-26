@@ -1,5 +1,4 @@
-﻿using System.Runtime.Serialization;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text.Json.Serialization;
 
 namespace Signapse.Data
@@ -8,7 +7,8 @@ namespace Signapse.Data
     {
         private RSAParameters _rsaParameters;
 
-        [JsonIgnore] public RSAParameters RSAParameters
+        [JsonIgnore]
+        public RSAParameters RSAParameters
         {
             get
             {

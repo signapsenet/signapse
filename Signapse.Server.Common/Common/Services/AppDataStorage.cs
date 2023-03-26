@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Signapse.Services
@@ -17,8 +16,8 @@ namespace Signapse.Services
 
     public class AppDataStorage : IDisposable, IAppDataStorage
     {
-        readonly string dirPath;
-        readonly Cryptography crypto;
+        private readonly string dirPath;
+        private readonly Cryptography crypto;
 
         public AppDataStorage(Cryptography crypto)
         {

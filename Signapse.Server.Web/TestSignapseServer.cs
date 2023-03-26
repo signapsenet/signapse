@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace Signapse.Web
 {
-    class TestSignapseServer : AffiliateServer
+    internal class TestSignapseServer : AffiliateServer
     {
         public const string API_KEY = "api_key";
 

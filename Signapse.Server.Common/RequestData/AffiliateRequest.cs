@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Signapse.RequestData
 {
@@ -14,7 +10,7 @@ namespace Signapse.RequestData
     /// <summary>
     /// This wraps a request between Signapse affiliate servers
     /// </summary>
-    sealed public class AffiliateRequest<T>
+    public sealed class AffiliateRequest<T>
         where T : IAffiliateRequest
     {
         public Guid ID { get; set; } = Guid.NewGuid();

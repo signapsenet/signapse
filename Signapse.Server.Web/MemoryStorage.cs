@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Signapse.Web
 {
-    class TestStorage : ISecureStorage, IAppDataStorage
+    internal class TestStorage : ISecureStorage, IAppDataStorage
     {
         public Task<string> ReadFile(string fname)
         {

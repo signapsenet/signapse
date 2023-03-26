@@ -1,13 +1,10 @@
-﻿using Microsoft.Extensions.Options;
-using Mustache;
-using System.IO;
-using System;
-using System.Reflection;
-using System.Linq;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.StaticFiles;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace Signapse.Server.Common.Services
 {
@@ -16,13 +13,13 @@ namespace Signapse.Server.Common.Services
     /// </summary>
     public class EmbeddedResourceLoader
     {
-        readonly Assembly asm;
-        readonly string webRootPath;
-        readonly string prefix;
-        readonly FileExtensionContentTypeProvider extProvider = new FileExtensionContentTypeProvider();
+        private readonly Assembly asm;
+        private readonly string webRootPath;
+        private readonly string prefix;
+        private readonly FileExtensionContentTypeProvider extProvider = new FileExtensionContentTypeProvider();
 
         // Makes debugging easier if we just load from disk, when possible
-        readonly static Dictionary<string, string[]> ContentFiles = new Dictionary<string, string[]>();
+        private static readonly Dictionary<string, string[]> ContentFiles = new Dictionary<string, string[]>();
 
         public EmbeddedResourceLoader(Assembly asm, IWebHostEnvironment env)
             : this(asm, string.Empty, env)
@@ -78,7 +75,7 @@ namespace Signapse.Server.Common.Services
             return null;
         }
 
-        string? FindFile(string truncatedPath)
+        private string? FindFile(string truncatedPath)
         {
             if (ContentFiles.TryGetValue(this.webRootPath, out var files))
             {
@@ -91,7 +88,7 @@ namespace Signapse.Server.Common.Services
             }
         }
 
-        string TruncatePath(string str)
+        private string TruncatePath(string str)
             => str.Replace("\\", "").Replace("/", "").Replace(".", "");
     }
 }

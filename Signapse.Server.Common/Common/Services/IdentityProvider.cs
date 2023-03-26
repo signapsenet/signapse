@@ -2,24 +2,22 @@
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Signapse.Data;
-using Signapse.Server.Middleware;
 using Signapse.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Security.Principal;
 
 namespace Signapse.Server.Common.Services
 {
     public class IdentityProvider
     {
-        readonly ContentProvider? contentProvider;
-        readonly Transaction<SignapseServerDescriptor> affiliates;
-        readonly RSASigner rsaSigner;
+        private readonly ContentProvider? contentProvider;
+        private readonly Transaction<SignapseServerDescriptor> affiliates;
+        private readonly RSASigner rsaSigner;
 
-        public IdentityProvider(IServiceProvider provider, Transaction<SignapseServerDescriptor> affiliates,  RSASigner rsaSigner)
+        public IdentityProvider(IServiceProvider provider, Transaction<SignapseServerDescriptor> affiliates, RSASigner rsaSigner)
         {
             this.contentProvider = provider.GetService<ContentProvider>();
             this.affiliates = affiliates;
@@ -107,7 +105,7 @@ namespace Signapse.Server.Common.Services
             return null;
         }
 
-        RSAParameters GetPublicKeyFromIssuer(string issuer)
+        private RSAParameters GetPublicKeyFromIssuer(string issuer)
         {
             // If we are on a web server, the affiliates database has no entries and we need to get the
             // descriptors from the content provider.

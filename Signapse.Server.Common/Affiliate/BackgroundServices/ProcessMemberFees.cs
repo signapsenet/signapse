@@ -9,9 +9,9 @@ namespace Signapse.Server.Common.BackgroundServices
 {
     public class ProcessMemberFees : BackgroundService
     {
-        readonly PaymentProcessor payments;
-        readonly JsonDatabase<Member> dbMembers;
-        readonly SignapseLedger ledger;
+        private readonly PaymentProcessor payments;
+        private readonly JsonDatabase<Member> dbMembers;
+        private readonly SignapseLedger ledger;
 
         public ProcessMemberFees(SignapseLedger ledger, PaymentProcessor payments, JsonDatabase<Member> dbMembers)
         {

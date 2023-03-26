@@ -1,14 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Signapse.BlockChain;
 using Signapse.BlockChain.Transactions;
 using Signapse.Services;
 using Signapse.Tests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Signapse.BlockChain.Tests
 {
@@ -26,13 +20,12 @@ namespace Signapse.BlockChain.Tests
             Genesis.Forge(null);
         }
 
-        readonly static Block Genesis = new Block()
+        private static readonly Block Genesis = new Block()
         {
             TimeStamp = new DateTimeOffset(new DateTime(2000, 12, 29, 0, 0, 0).ToUniversalTime()),
             Transaction = new GenesisTransaction(),
         };
-
-        static IReadOnlyList<IBlock> BLOCKS = new List<IBlock>()
+        private static IReadOnlyList<IBlock> BLOCKS = new List<IBlock>()
         {
             new Block(){
                 ID = Guid.NewGuid(),

@@ -6,7 +6,6 @@ using Signapse.RequestData;
 using Signapse.Server.Middleware;
 using Signapse.Services;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text.Json.Serialization;
@@ -47,12 +46,12 @@ namespace Signapse.Middleware
 
     public class InstallPageHandler
     {
-        readonly AppConfig appConfig;
-        readonly JsonDatabase<Data.User> db;
-        readonly PasswordHasher<Data.User> hasher;
-        readonly EmailProvider emailProvider;
-        readonly IHttpContextAccessor contextAccessor;
-        readonly ISecureStorage storage;
+        private readonly AppConfig appConfig;
+        private readonly JsonDatabase<Data.User> db;
+        private readonly PasswordHasher<Data.User> hasher;
+        private readonly EmailProvider emailProvider;
+        private readonly IHttpContextAccessor contextAccessor;
+        private readonly ISecureStorage storage;
 
         public InstallPageHandler(AppConfig appConfig, JsonDatabase<Data.User> db, PasswordHasher<Data.User> hasher, EmailProvider emailProvider, ISecureStorage storage, IHttpContextAccessor contextAccessor)
             => (this.appConfig, this.db, this.hasher, this.emailProvider, this.storage, this.contextAccessor) = (appConfig, db, hasher, emailProvider, storage, contextAccessor);

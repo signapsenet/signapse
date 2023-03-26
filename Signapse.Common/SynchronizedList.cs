@@ -6,14 +6,14 @@ namespace Signapse
     public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
     {
         private readonly List<T> _list = new List<T>();
-        
+
         public SynchronizedList()
         {
             SyncRoot = ((System.Collections.ICollection)_list).SyncRoot;
         }
 
         public object SyncRoot { get; }
-        
+
         public int Count
         {
             get
@@ -64,7 +64,7 @@ namespace Signapse
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
             lock (SyncRoot)
-                return ((IEnumerable<T>)_list).ToList().GetEnumerator();
+                return _list.ToList().GetEnumerator();
         }
 
         public T this[int index]

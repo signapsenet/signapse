@@ -32,12 +32,12 @@ namespace Signapse.Data
         public NoPolicyAccessAttribute() : base("NoAccess") { }
     }
 
-    static public class DatabaseEntryExtensions
+    public static class DatabaseEntryExtensions
     {
-        static Dictionary<Type, IReadOnlyDictionary<string, string[]>> PolicyAttributes
+        private static Dictionary<Type, IReadOnlyDictionary<string, string[]>> PolicyAttributes
             = new Dictionary<Type, IReadOnlyDictionary<string, string[]>>();
 
-        static IReadOnlyDictionary<string, string[]> GetPolicyAttributes<T>()
+        private static IReadOnlyDictionary<string, string[]> GetPolicyAttributes<T>()
         {
             if (PolicyAttributes.TryGetValue(typeof(T), out var res) == false)
             {
@@ -57,8 +57,8 @@ namespace Signapse.Data
             return res;
         }
 
-        static public TEntry ApplyPolicyAccess<TEntry>(this TEntry item, IAuthResults authResults)
-            where TEntry: IDatabaseEntry
+        public static TEntry ApplyPolicyAccess<TEntry>(this TEntry item, IAuthResults authResults)
+            where TEntry : IDatabaseEntry
         {
             var privateAttributes = GetPolicyAttributes<TEntry>();
             var res = Activator.CreateInstance<TEntry>();
@@ -95,7 +95,7 @@ namespace Signapse.Data
             return res;
         }
 
-        static public bool Matches<T>(this T entry, T cmp, params string[] properties)
+        public static bool Matches<T>(this T entry, T cmp, params string[] properties)
             where T : IDatabaseEntry
         {
             var props = new HashSet<string>(properties, StringComparer.OrdinalIgnoreCase);
@@ -114,14 +114,14 @@ namespace Signapse.Data
             return res;
         }
 
-        static public void CopyPropertiesFrom<T>(this T to, T from, Func<string, bool> includeProperty)
+        public static void CopyPropertiesFrom<T>(this T to, T from, Func<string, bool> includeProperty)
             where T : IDatabaseEntry
         {
             foreach (var prop in typeof(T).GetProperties())
             {
                 if (includeProperty(prop.Name))
-                    //|| System.Nullable.GetUnderlyingType(prop.PropertyType) != null
-                    //|| typeof(string).IsAssignableFrom(prop.PropertyType))
+                //|| System.Nullable.GetUnderlyingType(prop.PropertyType) != null
+                //|| typeof(string).IsAssignableFrom(prop.PropertyType))
                 {
                     if (prop.GetValue(from) is object val)
                     {
@@ -131,7 +131,7 @@ namespace Signapse.Data
             }
         }
 
-        static public T Clone<T>(this T item)
+        public static T Clone<T>(this T item)
             where T : IDatabaseEntry
         {
             var res = Activator.CreateInstance<T>() ?? throw new Exception($"Cannot create {typeof(T).Name}");

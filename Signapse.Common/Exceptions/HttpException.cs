@@ -3,9 +3,9 @@ using System.Net;
 
 namespace Signapse.Exceptions
 {
-    abstract public class HttpException : Exception
+    public abstract class HttpException : Exception
     {
-        readonly public HttpStatusCode StatusCode;
+        public readonly HttpStatusCode StatusCode;
 
         protected HttpException(HttpStatusCode status)
         {

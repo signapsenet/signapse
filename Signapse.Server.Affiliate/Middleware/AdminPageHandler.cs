@@ -10,7 +10,6 @@ using Signapse.Services;
 using System;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace Signapse.Middleware
@@ -85,11 +84,11 @@ namespace Signapse.Middleware
     /// </summary>
     public class AdminPageHandler
     {
-        readonly AppConfig appConfig;
-        readonly Cryptography crypto;
-        readonly AffiliateServer server;
-        readonly JsonDatabase<AffiliateJoinRequest> dbRequest;
-        readonly JsonSerializerFactory jsonFactory;
+        private readonly AppConfig appConfig;
+        private readonly Cryptography crypto;
+        private readonly AffiliateServer server;
+        private readonly JsonDatabase<AffiliateJoinRequest> dbRequest;
+        private readonly JsonSerializerFactory jsonFactory;
 
         public AdminPageHandler(AppConfig appConfig, Cryptography crypto, AffiliateServer server,
             JsonDatabase<AffiliateJoinRequest> dbRequest, JsonSerializerFactory jsonFactory)

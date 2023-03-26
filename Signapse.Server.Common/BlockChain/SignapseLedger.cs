@@ -5,9 +5,9 @@ namespace Signapse.BlockChain
 {
     public class SignapseLedger
     {
-        readonly static IBlock GenesisBlock;
+        private static readonly IBlock GenesisBlock;
 
-        class GenesisTransaction : ITransaction { TransactionType ITransaction.TransactionType => TransactionType.Genesis; }
+        private class GenesisTransaction : ITransaction { TransactionType ITransaction.TransactionType => TransactionType.Genesis; }
         static SignapseLedger()
         {
             var block = new Block()
@@ -19,7 +19,7 @@ namespace Signapse.BlockChain
             GenesisBlock = block;
         }
 
-        readonly SynchronizedList<IBlock> transactions = new SynchronizedList<IBlock>();
+        private readonly SynchronizedList<IBlock> transactions = new SynchronizedList<IBlock>();
 
         public SignapseLedger()
         {

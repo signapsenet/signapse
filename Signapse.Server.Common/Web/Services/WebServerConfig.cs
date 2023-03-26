@@ -5,8 +5,8 @@ namespace Signapse.Server.Web.Services
 {
     public class WebServerConfig
     {
-        readonly IAppDataStorage storage;
-        readonly JsonSerializerFactory JSON;
+        private readonly IAppDataStorage storage;
+        private readonly JsonSerializerFactory JSON;
 
         public Uri? SignapseServerUri { get; set; }
         public string? SignapseServerAPIKey { get; set; }

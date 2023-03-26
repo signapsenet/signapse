@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 namespace Signapse.BlockChain
 {
@@ -14,9 +13,9 @@ namespace Signapse.BlockChain
         ITransaction? Transaction { get; }
     }
 
-    static public class BlockExtensions
+    public static class BlockExtensions
     {
-        static public bool IsValid(this IBlock block, IBlock prevBlock)
+        public static bool IsValid(this IBlock block, IBlock prevBlock)
         {
             var newBlock = new Block(block);
             newBlock.Forge(prevBlock);

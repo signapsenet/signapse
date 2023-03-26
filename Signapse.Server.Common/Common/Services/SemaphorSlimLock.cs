@@ -5,7 +5,7 @@ namespace Signapse.Services
 {
     public class SemaphorSlimLock : IDisposable
     {
-        readonly SemaphoreSlim semaphore;
+        private readonly SemaphoreSlim semaphore;
         public SemaphorSlimLock(SemaphoreSlim semaphore)
         {
             this.semaphore = semaphore;

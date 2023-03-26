@@ -8,21 +8,16 @@ using Signapse.Server.Tests;
 using Signapse.Services;
 using Signapse.Test;
 using Signapse.Tests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Signapse.BackgroundServices.Tests
 {
     [TestClass]
     public class ProcessMemberFeesTests : DITestClass
     {
-        const float MEMBER_FEE = 100;
-        CancellationTokenSource ctSource = new CancellationTokenSource();
+        private const float MEMBER_FEE = 100;
+        private CancellationTokenSource ctSource = new CancellationTokenSource();
 
         public override void InitServices(ServiceCollection services)
         {
@@ -56,11 +51,11 @@ namespace Signapse.BackgroundServices.Tests
         }
 
         // User details and site configuration
-        const string siteName = "signapse.net";
-        const string networkName = "signapse.net";
-        const string adminEmail = "admin@email.com";
-        const string adminPassword = "password";
-        readonly static AppConfig.SMTPOptions smtp = new AppConfig.SMTPOptions()
+        private const string siteName = "signapse.net";
+        private const string networkName = "signapse.net";
+        private const string adminEmail = "admin@email.com";
+        private const string adminPassword = "password";
+        private static readonly AppConfig.SMTPOptions smtp = new AppConfig.SMTPOptions()
         {
             Address = siteName,
             User = adminEmail,
@@ -68,7 +63,7 @@ namespace Signapse.BackgroundServices.Tests
             ReplyTo = adminEmail,
         };
 
-        async Task<TestAffiliateServer[]> PrepareAffiliates()
+        private async Task<TestAffiliateServer[]> PrepareAffiliates()
         {
             string[] serverNames = { "Alice", "Joe", "Jordan" };
 
@@ -92,7 +87,7 @@ namespace Signapse.BackgroundServices.Tests
             return servers.Values.ToArray();
         }
 
-        async Task ProcessMemberFeesTest()
+        private async Task ProcessMemberFeesTest()
         {
             using var process = ActivatorUtilities.CreateInstance<MockProcessMemberFees>(scope.ServiceProvider);
 
@@ -114,20 +109,20 @@ namespace Signapse.BackgroundServices.Tests
 
         }
 
-        async Task ProcessFees()
+        private async Task ProcessFees()
         {
             await Task.CompletedTask;
         }
 
-        Dictionary<string, MemberFeeTestServer> servers = new Dictionary<string, MemberFeeTestServer>();
+        private Dictionary<string, MemberFeeTestServer> servers = new Dictionary<string, MemberFeeTestServer>();
 
-        async Task WatchContent(string sourceSite, string contentSite, string memberSite)
+        private async Task WatchContent(string sourceSite, string contentSite, string memberSite)
         {
             MemberFeeTestServer sourceServer = servers[sourceSite];
             MemberFeeTestServer contentServer = servers[contentSite];
             MemberFeeTestServer memberServer = servers[memberSite];
             Data.Member member = memberServer.Members.First();
-            
+
             // Log into the source server
             var jsonFactory = sourceServer.WebApp.Services.GetRequiredService<JsonSerializerFactory>();
             using (var session = new SignapseWebSession(jsonFactory, sourceServer.ServerUri))
@@ -143,7 +138,7 @@ namespace Signapse.BackgroundServices.Tests
             await Task.CompletedTask;
         }
 
-        void ValidateLedger(string serverName, string pct)
+        private void ValidateLedger(string serverName, string pct)
         {
             var server = servers[serverName];
             float frac = float.Parse(pct) / 100.0f;
@@ -151,7 +146,7 @@ namespace Signapse.BackgroundServices.Tests
             Assert.Fail("Incomplete Test");
         }
 
-        async Task ValidateTestCase(string methodName)
+        private async Task ValidateTestCase(string methodName)
         {
             Regex reWhen = new Regex(@"(\w+)'s member consumes (\w+)'s content from (\w+)'s site");
             Regex reThen = new Regex(@"(\w+) receives (\d+)% of the fee");
@@ -257,7 +252,7 @@ namespace Signapse.BackgroundServices.Tests
     }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    class WhenAttribute : Attribute
+    internal class WhenAttribute : Attribute
     {
         public string Clause { get; }
         public WhenAttribute(string clause)
@@ -265,7 +260,7 @@ namespace Signapse.BackgroundServices.Tests
     }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-    class ThenAttribute : Attribute
+    internal class ThenAttribute : Attribute
     {
         public string Clause { get; }
         public ThenAttribute(string clause)

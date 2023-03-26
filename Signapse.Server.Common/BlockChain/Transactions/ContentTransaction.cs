@@ -1,5 +1,4 @@
-﻿using Signapse.Data;
-using System;
+﻿using System;
 
 namespace Signapse.BlockChain.Transactions
 {

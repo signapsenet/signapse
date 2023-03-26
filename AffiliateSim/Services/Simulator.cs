@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Signapse.BlockChain;
 using Signapse.Server.Affiliate;
-using Signapse.Services;
-using System.Net.Http;
 using System.Text;
 
 namespace AffiliateSim.Services
@@ -14,10 +12,10 @@ namespace AffiliateSim.Services
 
     internal class Simulator : IDisposable
     {
-        readonly LedgerManager ledgerMgr;
-        readonly IServiceProvider provider;
-        readonly List<AffiliateInstance> affiliates = new List<AffiliateInstance>();
-        readonly CancellationTokenSource ctSource = new CancellationTokenSource();
+        private readonly LedgerManager ledgerMgr;
+        private readonly IServiceProvider provider;
+        private readonly List<AffiliateInstance> affiliates = new List<AffiliateInstance>();
+        private readonly CancellationTokenSource ctSource = new CancellationTokenSource();
 
         public IReadOnlyList<AffiliateInstance> Affiliates => affiliates;
 
@@ -69,8 +67,8 @@ namespace AffiliateSim.Services
             }
         }
 
-        const string CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        Random random = new Random();
+        private const string CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        private Random random = new Random();
         private string CreateName(int length = 8)
         {
             StringBuilder sb = new StringBuilder();

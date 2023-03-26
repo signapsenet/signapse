@@ -4,7 +4,7 @@ namespace AffiliateSim
 {
     public class FormFactory
     {
-        readonly IServiceProvider provider;
+        private readonly IServiceProvider provider;
         public FormFactory(IServiceProvider provider)
         {
             this.provider = provider;

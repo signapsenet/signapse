@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Signapse.BlockChain.Transactions;
-using Signapse.BlockChain;
+using Signapse.Server.Web;
 using Signapse.Services;
 using Signapse.Test;
-using System.Security.Cryptography;
-using Microsoft.AspNetCore.Identity;
-using Signapse.Server.Web;
 
 namespace Signapse.Server.Tests
 {
@@ -16,7 +13,7 @@ namespace Signapse.Server.Tests
         public WebApplication WebApp => this.webApp;
 #endif
 
-        public TestWebServer(): base(new string[0])
+        public TestWebServer() : base(new string[0])
         {
         }
 
@@ -43,7 +40,7 @@ namespace Signapse.Server.Tests
             {
                 Name = email,
                 Email = email,
-                MemberTier = Data.MemberTier.Free                
+                MemberTier = Data.MemberTier.Free
             };
             member.Password = hasher.HashPassword(member, password);
 

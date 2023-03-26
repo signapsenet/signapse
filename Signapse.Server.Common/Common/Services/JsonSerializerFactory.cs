@@ -1,14 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Json.Serialization.Metadata;
 
 namespace Signapse.Services
 {
@@ -76,9 +72,9 @@ namespace Signapse.Services
             catch { return default(T); }
         }
 
-        class DIConverter : JsonConverter<object>
+        private class DIConverter : JsonConverter<object>
         {
-            readonly IServiceProvider provider;
+            private readonly IServiceProvider provider;
 
             public DIConverter(IServiceProvider provider)
                 => this.provider = provider;
@@ -87,7 +83,7 @@ namespace Signapse.Services
                 => typeToConvert.Namespace?.StartsWith("System") == false
                     && typeToConvert.IsClass
                     && typeToConvert.GetConstructors()
-                        .Where(ctor => ctor.GetParameters().All(p=>p.HasDefaultValue))
+                        .Where(ctor => ctor.GetParameters().All(p => p.HasDefaultValue))
                         .Any() == false;
 
             public override object? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

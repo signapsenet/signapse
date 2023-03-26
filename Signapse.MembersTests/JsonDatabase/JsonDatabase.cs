@@ -4,21 +4,15 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Signapse.Data;
 using Signapse.Server;
 using Signapse.Server.Tests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using UserDB = Signapse.Services.JsonDatabase<Signapse.Data.User>;
 
 namespace Signapse.ServerTests.JsonDatabase
 {
-    abstract public class JsonDatabaseTest
+    public abstract class JsonDatabaseTest
     {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        CancellationTokenSource ctSource;
+        private CancellationTokenSource ctSource;
         protected SignapseWebClient HttpClient { get; private set; }
         protected TestAffiliateServer Server { get; private set; }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.

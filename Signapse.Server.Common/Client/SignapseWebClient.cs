@@ -1,9 +1,7 @@
-﻿using Signapse.BlockChain;
-using Signapse.Client;
+﻿using Signapse.Client;
 using System;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 
 namespace Signapse.Server
@@ -13,8 +11,8 @@ namespace Signapse.Server
     /// </summary>
     public class SignapseWebClient : IDisposable
     {
-        readonly HttpClient httpClient;
-        readonly Uri serverUri;
+        private readonly HttpClient httpClient;
+        private readonly Uri serverUri;
 
         public SignapseWebClient(Uri serverUri)
         {
@@ -35,7 +33,7 @@ namespace Signapse.Server
 
         public async Task<bool> UpdateJoinRequest(Guid requestGU, AffiliateStatus status)
         {
-            var res = await SendRequest(HttpMethod.Put, "/api/v1/join",new
+            var res = await SendRequest(HttpMethod.Put, "/api/v1/join", new
             {
                 Data = new { ID = requestGU, Status = status }
             });
@@ -56,7 +54,7 @@ namespace Signapse.Server
             return await SendRequest<bool>(HttpMethod.Post, "/api/v1/logout");
         }
 
-        class Response<T>
+        private class Response<T>
         {
             public T? Result { get; set; }
         }

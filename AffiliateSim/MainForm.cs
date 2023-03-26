@@ -1,18 +1,18 @@
-using System.Linq;
 using AffiliateSim.Services;
 
 namespace AffiliateSim
 {
     public partial class MainForm : Form
     {
-        readonly Simulator simulator;
+        private readonly Simulator simulator;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         private MainForm() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-        AffiliateInstance? FirstAffiliate = null;
-        AffiliateInstance? CurrentAffiliate => comboBox1
+        private AffiliateInstance? FirstAffiliate = null;
+
+        private AffiliateInstance? CurrentAffiliate => comboBox1
             .SelectedItem as AffiliateInstance;
 
         internal MainForm(Simulator simulator)
@@ -43,7 +43,7 @@ namespace AffiliateSim
             HighlightJoinedAffiliates();
         }
 
-        ListViewItem CreateAffiliateItem()
+        private ListViewItem CreateAffiliateItem()
         {
             var affiliate = simulator.GenerateAffiliate();
 

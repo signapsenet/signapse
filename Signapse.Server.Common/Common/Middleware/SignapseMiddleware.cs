@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 
 namespace Signapse.Server.Middleware
 {
-    class DefaultPathMiddleware
+    internal class DefaultPathMiddleware
     {
-        readonly RequestDelegate next;
-        readonly string defaultPath;
+        private readonly RequestDelegate next;
+        private readonly string defaultPath;
 
         public DefaultPathMiddleware(RequestDelegate next, string defaultPath = "index.html")
             => (this.next, this.defaultPath) = (next, defaultPath);
 
-        async public Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext context)
         {
             string path = context.Request.Path;
             if (path == "" || path.EndsWith("/"))

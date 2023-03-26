@@ -10,8 +10,7 @@ namespace Signapse
         public const string UserID = "http://www.signapse.net/api/v1/claims/signapse-user";
         public const string Expiry = "http://www.signapse.net/api/v1/claims/signapse-expiry";
         public const string MemberTier = "http://www.signapse.net/api/v1/claims/signapse-member-tier";
-
-        static Dictionary<AdministratorFlag, string> ClaimMappings = new Dictionary<AdministratorFlag, string>()
+        private static Dictionary<AdministratorFlag, string> ClaimMappings = new Dictionary<AdministratorFlag, string>()
         {
             { AdministratorFlag.Content, Roles.ContentAdministrator },
             { AdministratorFlag.Member, Roles.MembersAdministrator },
@@ -19,7 +18,7 @@ namespace Signapse
             { AdministratorFlag.Affiliate, Roles.AffiliatesAdministrator },
         };
 
-        static public ClaimsPrincipal CreatePrincipal(Data.User user, string authenticationType)
+        public static ClaimsPrincipal CreatePrincipal(Data.User user, string authenticationType)
         {
             var identity = new ClaimsIdentity(authenticationType);
             identity.AddClaim(new Claim(UserID, user.ID.ToString()));

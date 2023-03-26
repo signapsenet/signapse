@@ -1,13 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Signapse.Tests
 {
-    abstract public class DITestClass
+    public abstract class DITestClass
     {
-        ServiceCollection services;
-        ServiceProvider provider;
+        private ServiceCollection services;
+        private ServiceProvider provider;
         protected IServiceScope scope;
 
         protected DITestClass()
@@ -34,6 +33,6 @@ namespace Signapse.Tests
             provider.Dispose();
         }
 
-        virtual public void InitServices(ServiceCollection services) { }
+        public virtual void InitServices(ServiceCollection services) { }
     }
 }

@@ -3,9 +3,9 @@ using Signapse.Exceptions;
 
 namespace Signapse.Server.Middleware
 {
-    static public class ExceptionHandlerExtensions
+    public static class ExceptionHandlerExtensions
     {
-        static public IApplicationBuilder UseHttpExceptionHandler(this IApplicationBuilder app)
+        public static IApplicationBuilder UseHttpExceptionHandler(this IApplicationBuilder app)
         {
             return app.Use(async (ctx, next) =>
             {
@@ -13,7 +13,7 @@ namespace Signapse.Server.Middleware
                 {
                     await next(ctx);
                 }
-                catch(HttpException ex)
+                catch (HttpException ex)
                 {
                     ex.WriteTo(ctx.Response);
                 }

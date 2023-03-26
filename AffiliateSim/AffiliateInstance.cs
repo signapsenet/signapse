@@ -1,9 +1,6 @@
 ﻿using AffiliateSim.Services;
 using Signapse.BlockChain;
 using Signapse.BlockChain.Transactions;
-using Signapse.Services;
-using System.Diagnostics;
-using System.Transactions;
 
 namespace AffiliateSim
 {
@@ -15,13 +12,13 @@ namespace AffiliateSim
 
     internal class AffiliateInstance : IDisposable
     {
-        readonly LedgerManager ledgerMgr;
+        private readonly LedgerManager ledgerMgr;
         public AffiliateDescriptor Descriptor { get; }
         public SignapseLedger Ledger { get; }
 
-        readonly HashSet<AffiliateInstance> allAffiliates = new HashSet<AffiliateInstance>();
-        readonly CancellationTokenSource ctSource = new CancellationTokenSource();
-        readonly Random rand = new Random();
+        private readonly HashSet<AffiliateInstance> allAffiliates = new HashSet<AffiliateInstance>();
+        private readonly CancellationTokenSource ctSource = new CancellationTokenSource();
+        private readonly Random rand = new Random();
 
         public IReadOnlySet<AffiliateInstance> AllAffiliates => allAffiliates;
 

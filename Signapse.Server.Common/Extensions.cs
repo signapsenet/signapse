@@ -1,31 +1,25 @@
-﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Signapse.Exceptions;
 using Signapse.Services;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text.Json;
-using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Signapse
 {
-    static public class HttpExtensions
+    public static class HttpExtensions
     {
-        static public T? Read<T>(this HttpContext context)
+        public static T? Read<T>(this HttpContext context)
         {
             return context.Read<T>(out var propertiesRead);
         }
 
-        static public T? Read<T>(this HttpContext context, out HashSet<string> propertiesRead)
+        public static T? Read<T>(this HttpContext context, out HashSet<string> propertiesRead)
         {
             var req = context.Request;
 
@@ -110,7 +104,7 @@ namespace Signapse
             return default(T);
         }
 
-        static public void WriteTo(this Exception ex, HttpResponse response)
+        public static void WriteTo(this Exception ex, HttpResponse response)
         {
             if (ex is HttpException httpEx)
             {
@@ -136,9 +130,9 @@ namespace Signapse
         }
     }
 
-    static public class ClaimsPrincipalExtensions
+    public static class ClaimsPrincipalExtensions
     {
-        static public T ClaimValue<T>(this ClaimsPrincipal user, string claimType)
+        public static T ClaimValue<T>(this ClaimsPrincipal user, string claimType)
             where T : struct
         {
             return user.Claims
@@ -148,7 +142,7 @@ namespace Signapse
                 .FirstOrDefault();
         }
 
-        static public string? ClaimValue(this ClaimsPrincipal user, string claimType)
+        public static string? ClaimValue(this ClaimsPrincipal user, string claimType)
         {
             return user.Claims
                 .Where(c => c.Type == claimType)
@@ -156,7 +150,7 @@ namespace Signapse
                 .FirstOrDefault();
         }
 
-        static public Guid SignapseUserID(this ClaimsPrincipal user)
+        public static Guid SignapseUserID(this ClaimsPrincipal user)
         {
             if (user.Claims.FirstOrDefault(c => c.Type == Claims.UserID)?.Value is string id
                 && Guid.TryParse(id, out var guid))
@@ -170,9 +164,9 @@ namespace Signapse
         }
     }
 
-    static public class ServerStringExtensions
+    public static class ServerStringExtensions
     {
-        readonly static public JsonSerializerOptions JsonOptions = new JsonSerializerOptions()
+        public static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions()
         {
             PropertyNameCaseInsensitive = true,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -183,7 +177,7 @@ namespace Signapse
             }
         };
 
-        static public string Serialize<T>(this T obj)
+        public static string Serialize<T>(this T obj)
         {
             try
             {

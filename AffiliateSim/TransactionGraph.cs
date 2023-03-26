@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using AffiliateSim.Services;
 using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using AffiliateSim.Services;
 
 namespace AffiliateSim
 {
     public partial class TransactionGraph : UserControl
     {
-        readonly DateTimeOffset startTime = DateTimeOffset.UtcNow;
-        System.Windows.Forms.Timer timer;
+        private readonly DateTimeOffset startTime = DateTimeOffset.UtcNow;
+        private System.Windows.Forms.Timer timer;
 
         internal Simulator? Simulator { get; set; }
 
@@ -42,7 +33,7 @@ namespace AffiliateSim
             base.OnLoad(e);
         }
 
-        Image? bgImage;
+        private Image? bgImage;
         private void UpdateGraph()
         {
             SyncBGImageSize();
@@ -57,7 +48,7 @@ namespace AffiliateSim
             }
         }
 
-        void SyncBGImageSize()
+        private void SyncBGImageSize()
         {
             var w = this.Width;
             var h = this.Height;

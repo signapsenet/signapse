@@ -2,16 +2,13 @@
 using Signapse.RequestData;
 using System;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Signapse.BlockChain
 {
     public class Block : IBlock, IAffiliateRequest
     {
-        static public Block Genesis => new Block()
+        public static Block Genesis => new Block()
         {
             TimeStamp = DateTimeOffset.Now,
             Transaction = new GenesisTransaction()

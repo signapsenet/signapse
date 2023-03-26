@@ -1,25 +1,23 @@
-﻿using System.IO;
-using System;
-using System.Reflection;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.StaticFiles;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
 using Signapse.Server.Common.Services;
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Signapse.Server.Middleware
 {
     /// <summary>
     /// Use embedded resources for streaming content.
     /// </summary>
-    class EmbeddedResourcesMiddleware
+    internal class EmbeddedResourcesMiddleware
     {
-        readonly EmbeddedResourceLoader resLoader;
-        readonly RequestDelegate next;
-        readonly Assembly asm;
+        private readonly EmbeddedResourceLoader resLoader;
+        private readonly RequestDelegate next;
+        private readonly Assembly asm;
 
         public EmbeddedResourcesMiddleware(RequestDelegate next, Assembly asm, IWebHostEnvironment env)
         {
@@ -28,7 +26,7 @@ namespace Signapse.Server.Middleware
             this.asm = asm;
         }
 
-        async public Task Invoke(HttpContext httpContext)
+        public async Task Invoke(HttpContext httpContext)
         {
             string path = httpContext.Request.Path;
 
@@ -54,7 +52,7 @@ namespace Signapse.Server.Middleware
             }
         }
 
-        string TruncatePath(string str)
+        private string TruncatePath(string str)
             => str.Replace("\\", "").Replace("/", "").Replace(".", "");
     }
 

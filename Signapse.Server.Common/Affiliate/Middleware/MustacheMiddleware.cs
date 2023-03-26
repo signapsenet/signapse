@@ -1,24 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Net.Http.Headers;
-using Mustache;
+﻿using Microsoft.AspNetCore.Http;
 using Signapse.Data;
-using Signapse.Exceptions;
-using Signapse.Server;
 using Signapse.Server.Common.Services;
 using Signapse.Services;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Security.Claims;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Signapse.Server.Middleware
 {

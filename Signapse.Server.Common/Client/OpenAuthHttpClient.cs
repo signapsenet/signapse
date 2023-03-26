@@ -1,27 +1,19 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text.RegularExpressions;
-using HtmlAgilityPack;
-using System.Web;
+﻿using HtmlAgilityPack;
 using Microsoft.AspNetCore.WebUtilities;
-using static System.Formats.Asn1.AsnWriter;
-using static System.Net.WebRequestMethods;
-using Newtonsoft.Json.Linq;
-using static System.Collections.Specialized.BitVector32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Signapse.Server.Extensions
 {
     public class OpenAuthHttpClient : IDisposable
     {
-        readonly Uri callbackUri;
-        readonly Uri remoteServer;
-        string bearerToken;
-
-        HttpClient httpClient = new HttpClient();
+        private readonly Uri callbackUri;
+        private readonly Uri remoteServer;
+        private string bearerToken;
+        private HttpClient httpClient = new HttpClient();
 
         public OpenAuthHttpClient(Uri callbackUri, Uri remoteServer, string bearerToken)
         {
@@ -55,7 +47,7 @@ namespace Signapse.Server.Extensions
                 && authRes.StatusCode != System.Net.HttpStatusCode.Redirect;
         }
 
-        async Task<HttpResponseMessage> SendAuthorize()
+        private async Task<HttpResponseMessage> SendAuthorize()
         {
             var url = $"http://{remoteServer.Host}:{remoteServer.Port}/oauth/authorize";
 
@@ -74,17 +66,17 @@ namespace Signapse.Server.Extensions
             return await httpClient.SendAsync(request);
         }
 
-        async Task<HttpResponseMessage> SendLogin(string action, Dictionary<string, string> values)
+        private async Task<HttpResponseMessage> SendLogin(string action, Dictionary<string, string> values)
         {
             var url = $"http://{remoteServer.Host}:{remoteServer.Port}{action}";
-            
+
             using var request = new HttpRequestMessage(HttpMethod.Post, url);
             request.Content = new FormUrlEncodedContent(values);
-            
+
             return await httpClient.SendAsync(request);
         }
 
-        Dictionary<string, string> ParseLoginForm(string html, string email, string password, out string action)
+        private Dictionary<string, string> ParseLoginForm(string html, string email, string password, out string action)
         {
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(html);
@@ -131,7 +123,7 @@ namespace Signapse.Server.Extensions
             T? res = Activator.CreateInstance<T>();
 
             await Task.CompletedTask;
-            
+
             return res;
         }
     }

@@ -1,10 +1,7 @@
 ﻿using Signapse.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -13,11 +10,11 @@ namespace Signapse.Client
     /// <summary>
     /// Base class for communication with Signapse endpoints
     /// </summary>
-    abstract public class HttpSession : IDisposable
+    public abstract class HttpSession : IDisposable
     {
-        readonly protected Uri serverUri;
-        readonly protected JsonSerializerFactory jsonFactory;
-        readonly protected HttpClient httpClient;
+        protected readonly Uri serverUri;
+        protected readonly JsonSerializerFactory jsonFactory;
+        protected readonly HttpClient httpClient;
 
         protected HttpSession(JsonSerializerFactory jsonFactory, Uri serverUri)
         {
@@ -32,7 +29,7 @@ namespace Signapse.Client
             httpClient.Dispose();
         }
 
-        static public HttpClient CreateClient(bool autoRedirect = true)
+        public static HttpClient CreateClient(bool autoRedirect = true)
         {
             var handler = new HttpClientHandler()
             {

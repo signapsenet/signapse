@@ -4,8 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
-using System.Xml.Linq;
 
 namespace Signapse.BlockChain
 {
@@ -14,10 +12,9 @@ namespace Signapse.BlockChain
     /// </summary>
     public class BlockStream : IEnumerable<IBlock>
     {
-        readonly JsonSerializerFactory jsonFactory;
-
-        readonly string path;
-        DateTimeOffset offset = DateTimeOffset.MinValue;
+        private readonly JsonSerializerFactory jsonFactory;
+        private readonly string path;
+        private DateTimeOffset offset = DateTimeOffset.MinValue;
 
         public BlockStream(JsonSerializerFactory jsonFactory, string path)
         {
@@ -89,7 +86,7 @@ namespace Signapse.BlockChain
 
                 string fname = Path.Combine(path, g.Key.Year.ToString(), g.Key.ToString("yyyy-MM-dd"));
                 var existingBlocks = LoadBlocks(fname);
-                
+
                 List<IBlock> mergedBlocks = new List<IBlock>();
                 foreach (var block in existingBlocks)
                 {

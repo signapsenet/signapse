@@ -1,5 +1,4 @@
-﻿using Signapse.RequestData;
-using Signapse.Services;
+﻿using Signapse.Services;
 using System;
 using System.Security.Claims;
 
@@ -25,7 +24,7 @@ namespace Signapse.Data
 
     public class User : IDatabaseEntry
     {
-        readonly public static Guid PrimaryAdminGU = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        public static readonly Guid PrimaryAdminGU = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
         public Guid ID { get; set; } = Guid.Empty;
 

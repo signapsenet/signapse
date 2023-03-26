@@ -1,15 +1,9 @@
-﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using Microsoft.IdentityModel.Tokens;
-using Signapse.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 
 namespace Signapse.Services
@@ -21,9 +15,8 @@ namespace Signapse.Services
 
     public class Cryptography
     {
-        const string CRYPTO_KEY = "@(Super_Secret_Key$)";
-
-        readonly CryptoKeys cryptoKeys;
+        private const string CRYPTO_KEY = "@(Super_Secret_Key$)";
+        private readonly CryptoKeys cryptoKeys;
 
         public Cryptography(ISecureStorage secureStorage, JsonSerializerFactory jsonFactory)
         {
@@ -38,7 +31,7 @@ namespace Signapse.Services
                 // Generate a unique key for this site
                 using RSACryptoServiceProvider RSA = new RSACryptoServiceProvider();
                 using var md5 = MD5.Create();
-             
+
                 var data = RSA.Encrypt(Encoding.UTF8.GetBytes(CRYPTO_KEY), RSAEncryptionPadding.Pkcs1);
                 cryptoKeys = new CryptoKeys()
                 {

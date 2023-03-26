@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Signapse.Data;
 using Signapse.ServerTests.JsonDatabase;
 using System.Net;
 using UserDB = Signapse.Services.JsonDatabase<Signapse.Data.User>;

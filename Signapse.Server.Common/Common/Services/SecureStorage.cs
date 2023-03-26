@@ -13,7 +13,7 @@ namespace Signapse.Services
 
     public class SecureStorage : IDisposable, ISecureStorage
     {
-        readonly IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
+        private readonly IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
 
         public SecureStorage()
         {

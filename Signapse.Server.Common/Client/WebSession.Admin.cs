@@ -1,6 +1,5 @@
 ﻿using Signapse.Data;
 using Signapse.Server;
-using Signapse.Services;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -99,7 +98,7 @@ namespace Signapse.Client
             {
                 path = $"/api/v1/{path}";
             }
-            
+
             return SendRequest<T>(HttpMethod.Get, $"{path}/{id}");
         }
     }

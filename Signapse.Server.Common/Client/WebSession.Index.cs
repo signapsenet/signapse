@@ -1,6 +1,4 @@
-﻿using Signapse.Data;
-using Signapse.Services;
-using System;
+﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 

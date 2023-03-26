@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Signapse.BlockChain.Transactions;
-using Signapse.Data;
 using Signapse.RequestData;
 using Signapse.Server.Common;
 using Signapse.Server.Common.Services;
@@ -18,11 +17,11 @@ namespace Signapse.Middleware
 {
     public class IndexPageData : MustacheData
     {
-        readonly IHttpContextAccessor contextAccessor;
-        readonly ContentProvider contentProvider;
-        readonly ServerBase server;
-        readonly JsonDatabase<Data.Member> db;
-        readonly PasswordHasher<Data.Member> hasher;
+        private readonly IHttpContextAccessor contextAccessor;
+        private readonly ContentProvider contentProvider;
+        private readonly ServerBase server;
+        private readonly JsonDatabase<Data.Member> db;
+        private readonly PasswordHasher<Data.Member> hasher;
 
         public IndexPageData(IHttpContextAccessor contextAccessor, ContentProvider contentProvider,
             ServerBase server, JsonDatabase<Data.Member> db, PasswordHasher<Data.Member> hasher)

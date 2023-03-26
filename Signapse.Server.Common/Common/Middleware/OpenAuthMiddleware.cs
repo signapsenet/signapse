@@ -1,48 +1,38 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Linq;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using System.Security.Cryptography;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
-using System.IO;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
-using Signapse.Data;
-using Signapse.Services;
-using System.Collections.Generic;
-using System.Text.Json;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
-using Signapse.Server.Extensions;
-using System.Text;
-using System.Security.Cryptography.X509Certificates;
-using System.Net.Security;
-using System.Net;
+using Microsoft.IdentityModel.Tokens;
+using Signapse.Data;
 using Signapse.Server.Common;
-using System.Net.Http.Json;
 using Signapse.Server.Common.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Diagnostics.CodeAnalysis;
-using System.Net.Http;
+using Signapse.Services;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Signapse.Server.Middleware
 {
-    class OpenAuthMiddleware
+    internal class OpenAuthMiddleware
     {
         public OpenAuthMiddleware()
         {
         }
 
-        RSAParameters GetPublicKeyFromIssuer(HttpContext context, Transaction<SignapseServerDescriptor> affiliates, string issuer)
+        private RSAParameters GetPublicKeyFromIssuer(HttpContext context, Transaction<SignapseServerDescriptor> affiliates, string issuer)
         {
             // If we are on a web server, the affiliates database has no entries and we need to get the
             // descriptors from the content provider.
@@ -425,7 +415,7 @@ namespace Signapse.Server.Middleware
             }
         }
 
-        ClaimsPrincipal? ValidateAccessToken(HttpContext context, Transaction<SignapseServerDescriptor> affiliates, string accessToken)
+        private ClaimsPrincipal? ValidateAccessToken(HttpContext context, Transaction<SignapseServerDescriptor> affiliates, string accessToken)
         {
             // Decode the JWT access token to get the issuer
             var jwt = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(accessToken);
@@ -521,8 +511,7 @@ namespace Signapse.Server.Middleware
             await WriteJWT(context);
         }
 
-
-        AuthenticationTicket? GetTicket(HttpContext context)
+        private AuthenticationTicket? GetTicket(HttpContext context)
         {
             CookieAuthenticationOptions opt = context.RequestServices
                 .GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>()
@@ -541,7 +530,7 @@ namespace Signapse.Server.Middleware
             }
         }
 
-        async public Task WriteJWT(HttpContext context, Guid clientId)
+        public async Task WriteJWT(HttpContext context, Guid clientId)
         {
             var serverUri = context.RequestServices.GetRequiredService<ServerBase>().ServerUri;
             var rsaSigner = context.RequestServices.GetRequiredService<RSASigner>();
@@ -566,7 +555,7 @@ namespace Signapse.Server.Middleware
             });
         }
 
-        async public Task WriteJWT(HttpContext context)
+        public async Task WriteJWT(HttpContext context)
         {
             var serverUri = context.RequestServices.GetRequiredService<ServerBase>().ServerUri;
             var rsaSigner = context.RequestServices.GetRequiredService<RSASigner>();
@@ -610,7 +599,7 @@ namespace Signapse.Server.Middleware
             await Task.CompletedTask;
         }
 
-        X509Certificate2 GenerateSelfSignedCertificate(string subjectName)
+        private X509Certificate2 GenerateSelfSignedCertificate(string subjectName)
         {
             using var rsa = RSA.Create(2048);
             var request = new CertificateRequest($"CN={subjectName}", rsa, HashAlgorithmName.SHA512, RSASignaturePadding.Pkcs1);
@@ -619,9 +608,9 @@ namespace Signapse.Server.Middleware
         }
     }
 
-    static public class OpenAuthMiddlewareExtensions
+    public static class OpenAuthMiddlewareExtensions
     {
-        static public IServiceCollection AddSignapseOpenAuth(this IServiceCollection services)
+        public static IServiceCollection AddSignapseOpenAuth(this IServiceCollection services)
         {
             services
                 .AddScoped<IdentityProvider>()
@@ -673,7 +662,7 @@ namespace Signapse.Server.Middleware
             return services;
         }
 
-        static public WebApplication UseSignapseOpenAuth(this WebApplication app)
+        public static WebApplication UseSignapseOpenAuth(this WebApplication app)
         {
             var oauth = new OpenAuthMiddleware();
 
@@ -701,7 +690,7 @@ namespace Signapse.Server.Middleware
             return app;
         }
 
-        static public ClaimsPrincipal CreatePrincipal(Member member, string authenticationType)
+        public static ClaimsPrincipal CreatePrincipal(Member member, string authenticationType)
         {
             var identity = new ClaimsIdentity(authenticationType, ClaimTypes.Name, ClaimTypes.Role);
             identity.AddClaim(new Claim(Claims.UserID, member.ID.ToString()));
@@ -717,7 +706,7 @@ namespace Signapse.Server.Middleware
             return new ClaimsPrincipal(identity);
         }
 
-        static async public Task WriteJWT(HttpContext context)
+        public static async Task WriteJWT(HttpContext context)
         {
             var rsaSigner = context.RequestServices.GetRequiredService<RSASigner>();
 
@@ -745,21 +734,21 @@ namespace Signapse.Server.Middleware
         }
     }
 
-    enum CodeChallengeMethod
+    internal enum CodeChallengeMethod
     {
         Plain,
         S256
     }
 
-    class AccessToken
+    internal class AccessToken
     {
         public string access_token { get; set; } = string.Empty;
         public string token_type { get; set; } = string.Empty;
     }
 
-    class AuthCode
+    internal class AuthCode
     {
-        readonly static Dictionary<string, AuthCode> UsedCodes = new Dictionary<string, AuthCode>();
+        private static readonly Dictionary<string, AuthCode> UsedCodes = new Dictionary<string, AuthCode>();
 
         public string ClientId { get; set; } = string.Empty;
         public string CodeChallenge { get; set; } = string.Empty;

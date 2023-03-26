@@ -1,27 +1,26 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Signapse.Data;
-using Signapse.Services;
-using Signapse.RequestData;
-using Signapse.BlockChain.Transactions;
+using Microsoft.Extensions.DependencyInjection;
 using Signapse.BlockChain;
-using System.Security.Cryptography;
+using Signapse.BlockChain.Transactions;
+using Signapse.Data;
+using Signapse.RequestData;
+using Signapse.Services;
 using System;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
 
 namespace Signapse.Server.Middleware
 {
-    class SignapseLedgerMiddleware
+    internal class SignapseLedgerMiddleware
     {
-        readonly Transaction<SignapseServerDescriptor> affiliates;
-        readonly Transaction<AffiliateJoinRequest> joinRequests;
-        readonly SignapseServerDescriptor server;
-        readonly SignapseLedger ledger;
-        readonly RSASigner rsaSigner;
-        readonly HttpContext context;
+        private readonly Transaction<SignapseServerDescriptor> affiliates;
+        private readonly Transaction<AffiliateJoinRequest> joinRequests;
+        private readonly SignapseServerDescriptor server;
+        private readonly SignapseLedger ledger;
+        private readonly RSASigner rsaSigner;
+        private readonly HttpContext context;
 
         public SignapseLedgerMiddleware(
             Transaction<SignapseServerDescriptor> dbAffiliates,
@@ -39,7 +38,7 @@ namespace Signapse.Server.Middleware
             this.context = context;
         }
 
-        async Task<bool> ValidateTransaction(IBlock block)
+        private async Task<bool> ValidateTransaction(IBlock block)
         {
             RSAParameters publicKey(Guid affiliateID)
             {
@@ -86,7 +85,7 @@ namespace Signapse.Server.Middleware
             return true;
         }
 
-        async public Task HandleJoinPut()
+        public async Task HandleJoinPut()
         {
             var request = await context.Request.ReadFromJsonAsync<WebRequest<AffiliateJoinRequest>>();
             var joinRequest = request?.Data
@@ -101,7 +100,7 @@ namespace Signapse.Server.Middleware
             await joinRequests.Commit();
         }
 
-        async public Task HandleJoinPost()
+        public async Task HandleJoinPost()
         {
             var request = await context.Request.ReadFromJsonAsync<WebRequest<SignapseServerDescriptor>>();
             var descriptor = request?.Data;
@@ -118,12 +117,12 @@ namespace Signapse.Server.Middleware
                 joinRequests.Insert(joinRequest);
 
                 await context.Response.WriteAsJsonAsync(joinRequest);
-                
+
                 await joinRequests.Commit();
             }
         }
 
-        async public Task HandleJoinRequestGet()
+        public async Task HandleJoinRequestGet()
         {
             await context.Response.WriteAsJsonAsync(new
             {
@@ -131,7 +130,7 @@ namespace Signapse.Server.Middleware
             });
         }
 
-        async public Task HandleTransactionPut()
+        public async Task HandleTransactionPut()
         {
             var request = await context.Request.ReadFromJsonAsync<AffiliateRequest<Block>>();
 
@@ -143,7 +142,7 @@ namespace Signapse.Server.Middleware
             }
         }
 
-        async public Task HandleContentGet()
+        public async Task HandleContentGet()
         {
             var ledger = context.RequestServices.GetRequiredService<SignapseLedger>();
             await context.Response.WriteAsJsonAsync(new
@@ -156,16 +155,16 @@ namespace Signapse.Server.Middleware
         }
     }
 
-    static public class SignapseLedgerExtensions
+    public static class SignapseLedgerExtensions
     {
-        static public IServiceCollection AddSignapseLedger(this IServiceCollection services)
+        public static IServiceCollection AddSignapseLedger(this IServiceCollection services)
         {
             services.AddSingleton<SignapseLedger>();
 
             return services;
         }
 
-        static public WebApplication UseSignapseLedger(this WebApplication app)
+        public static WebApplication UseSignapseLedger(this WebApplication app)
         {
             async Task handleRequest(HttpContext context, Func<SignapseLedgerMiddleware, Task> callback)
             {

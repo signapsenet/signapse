@@ -1,31 +1,21 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Mustache;
-using System.IO;
-using System.Net;
-using System.Reflection;
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using Microsoft.Extensions.Hosting;
-using System.Linq;
-using System.Text.Json;
-using Signapse.Services;
 using Signapse.Server.Common.Services;
-using Microsoft.AspNetCore.Hosting;
-using System.Net.Mime;
-using System.Net.Http;
-using Microsoft.AspNetCore.Routing.Patterns;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Primitives;
+using Signapse.Services;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Signapse.Server.Middleware
 {
-    static public class MustacheEndpointExtensions
+    public static class MustacheEndpointExtensions
     {
         /// <summary>
         /// Specifies the options for WebApplication.MapMustacheEndpoint
@@ -45,7 +35,7 @@ namespace Signapse.Server.Middleware
         /// <param name="app"></param>
         /// <param name="path">The web path</param>
         /// <returns></returns>
-        static public IEndpointConventionBuilder MapMustacheEndpoint<TData>(this WebApplication app, string path)
+        public static IEndpointConventionBuilder MapMustacheEndpoint<TData>(this WebApplication app, string path)
             => app.MapMustacheEndpoint<TData>(path, config => { });
 
         /// <summary>
@@ -58,7 +48,7 @@ namespace Signapse.Server.Middleware
         /// <param name="config">Configuration callback</param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        static public IEndpointConventionBuilder MapMustacheEndpoint<TData>(this WebApplication app, string path, Action<MustacheOptions> config)
+        public static IEndpointConventionBuilder MapMustacheEndpoint<TData>(this WebApplication app, string path, Action<MustacheOptions> config)
         {
             MustacheOptions options = new MustacheOptions()
             {
@@ -139,8 +129,9 @@ namespace Signapse.Server.Middleware
             }
         }
 
-        readonly static Dictionary<Type, Dictionary<string, MethodInfo>> TypeMethods = new Dictionary<Type, Dictionary<string, MethodInfo>>();
-        static MethodInfo? FindMethod<T>(string methodName)
+        private static readonly Dictionary<Type, Dictionary<string, MethodInfo>> TypeMethods = new Dictionary<Type, Dictionary<string, MethodInfo>>();
+
+        private static MethodInfo? FindMethod<T>(string methodName)
         {
             if (TypeMethods.TryGetValue(typeof(T), out var methods) == false)
             {
@@ -165,7 +156,7 @@ namespace Signapse.Server.Middleware
                 : null;
         }
 
-        static string? ReadParameter(HttpContext context, string? name)
+        private static string? ReadParameter(HttpContext context, string? name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -186,7 +177,7 @@ namespace Signapse.Server.Middleware
             }
         }
 
-        static object? ConvertParameter(HttpContext context, string? name, Type type)
+        private static object? ConvertParameter(HttpContext context, string? name, Type type)
         {
             if (ReadParameter(context, name) is string value)
             {

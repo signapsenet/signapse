@@ -1,15 +1,9 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Signapse;
 using Signapse.Client;
 using Signapse.Server.Common;
 using Signapse.Server.Middleware;
 using Signapse.Server.Tests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Signapse.Tests
 {
@@ -17,7 +11,7 @@ namespace Signapse.Tests
     public class MustacheExtensionsTests
     {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        ServerBase server;
+        private ServerBase server;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         [TestInitialize]
@@ -89,7 +83,7 @@ namespace Signapse.Tests
             Assert.AreEqual(EXPECTED_CONTENT, responseContent);
         }
 
-        class TestMustacheServer : TestWebServer
+        private class TestMustacheServer : TestWebServer
         {
             protected override void ConfigureEndpoints(WebApplication app)
             {
@@ -99,7 +93,7 @@ namespace Signapse.Tests
             }
         }
 
-        class TestMustacheData
+        private class TestMustacheData
         {
             public string TestProperty => "Test";
 

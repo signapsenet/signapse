@@ -1,18 +1,9 @@
-﻿using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Signapse.BlockChain;
 using Signapse.BlockChain.Transactions;
 using Signapse.Data;
-using Signapse.Server;
-using Signapse.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UserDB = Signapse.Services.JsonDatabase<Signapse.Data.User>;
 
 namespace Signapse.Server.Tests
@@ -21,9 +12,9 @@ namespace Signapse.Server.Tests
     public class SignapseAffiliateServerTests
     {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        TestAffiliateServer localServer;
-        TestAffiliateServer remoteServer;
-        CancellationTokenSource ctSource;
+        private TestAffiliateServer localServer;
+        private TestAffiliateServer remoteServer;
+        private CancellationTokenSource ctSource;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         [TestInitialize]

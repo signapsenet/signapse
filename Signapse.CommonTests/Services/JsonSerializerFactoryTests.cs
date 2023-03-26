@@ -1,13 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Signapse.Services;
 using Signapse.Tests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Signapse.Services.Tests
 {
@@ -33,8 +26,9 @@ namespace Signapse.Services.Tests
             Assert.AreEqual(json, json2);
         }
 
-        class TestService { }
-        class TestDI
+        private class TestService { }
+
+        private class TestDI
         {
             public TestDI(TestService svc) { }
 

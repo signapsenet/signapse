@@ -1,22 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Signapse.Data;
 using Signapse.Server.Common;
 using Signapse.Server.Common.Services;
-using Signapse.Server.Extensions;
 using Signapse.Server.Middleware;
 using Signapse.Server.Web.Services;
 using Signapse.Services;
-using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Signapse.Server.Web

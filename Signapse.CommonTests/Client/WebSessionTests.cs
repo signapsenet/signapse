@@ -1,16 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Signapse.Client;
 using Signapse.Data;
 using Signapse.Server;
 using Signapse.Server.Common.Services;
 using Signapse.Server.Tests;
 using Signapse.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Signapse.Client.Tests
 {
@@ -24,11 +18,11 @@ namespace Signapse.Client.Tests
         }
 
         // User details and site configuration
-        const string siteName = "signapse.net";
-        const string networkName = "signapse.net";
-        const string adminEmail = "admin@email.com";
-        const string adminPassword = "password";
-        readonly static AppConfig.SMTPOptions smtp = new AppConfig.SMTPOptions()
+        private const string siteName = "signapse.net";
+        private const string networkName = "signapse.net";
+        private const string adminEmail = "admin@email.com";
+        private const string adminPassword = "password";
+        private static readonly AppConfig.SMTPOptions smtp = new AppConfig.SMTPOptions()
         {
             Address = siteName,
             User = adminEmail,
@@ -36,16 +30,17 @@ namespace Signapse.Client.Tests
             ReplyTo = adminEmail,
         };
 
-        async Task Install()
+        private async Task Install()
         {
             var res = await session.Install(smtp, siteName, networkName, adminEmail, adminPassword);
             Assert.AreEqual(true, res.IsSuccessStatusCode);
         }
 
         // Initial join requests
-        static readonly Guid OtherServerID = Guid.Parse("933764B2-A215-44CB-8096-FF24C397800E");
-        AffiliateJoinRequest[]? _joinRequestsToAdd;
-        AffiliateJoinRequest[] JoinRequestsToAdd => _joinRequestsToAdd = _joinRequestsToAdd ?? new AffiliateJoinRequest[]
+        private static readonly Guid OtherServerID = Guid.Parse("933764B2-A215-44CB-8096-FF24C397800E");
+        private AffiliateJoinRequest[]? _joinRequestsToAdd;
+
+        private AffiliateJoinRequest[] JoinRequestsToAdd => _joinRequestsToAdd = _joinRequestsToAdd ?? new AffiliateJoinRequest[]
         {
             new () {
                 Descriptor = affiliateServer.Descriptor,
@@ -85,7 +80,7 @@ namespace Signapse.Client.Tests
             },
         };
 
-        void AddJoinRequests()
+        private void AddJoinRequests()
         {
             var db = affiliateServer.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
             foreach (var jr in JoinRequestsToAdd)
@@ -134,7 +129,7 @@ namespace Signapse.Client.Tests
         {
             const string apiKey = "!@#API_KEY_103";
             var appConfig = affiliateServer.WebApp.Services.GetRequiredService<AppConfig>();
-            
+
             await Install();
             await session.SaveSiteConfig(apiKey);
 
@@ -145,7 +140,7 @@ namespace Signapse.Client.Tests
         public async Task AcceptAllRequests_Accepts_Only_Waiting_Requests_To_Server()
         {
             var db = affiliateServer.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
-            
+
             await Install();
             AddJoinRequests();
             await session.AcceptAllRequests();
@@ -157,7 +152,7 @@ namespace Signapse.Client.Tests
         public async Task RejectAllRequests_Rejects_Only_Waiting_Requests_To_Server()
         {
             var db = affiliateServer.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
-            
+
             await Install();
             AddJoinRequests();
             await session.RejectAllRequests();
@@ -169,7 +164,7 @@ namespace Signapse.Client.Tests
         public async Task AcceptRequest_Accepts_Only_Indicated_Request()
         {
             var db = affiliateServer.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
-            
+
             await Install();
             AddJoinRequests();
             await session.Login(adminEmail, adminPassword);
@@ -183,7 +178,7 @@ namespace Signapse.Client.Tests
         public async Task RejectRequest_Rejects_Only_Indicated_Request()
         {
             var db = affiliateServer.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
-            
+
             await Install();
             AddJoinRequests();
             await session.Login(adminEmail, adminPassword);
@@ -216,11 +211,11 @@ namespace Signapse.Client.Tests
         public async Task Get_Affiliate_Details_Matches_Server_Descriptor()
         {
             var jsonFactory = affiliateServer.WebApp.Services.GetRequiredService<JsonSerializerFactory>();
-            
+
             await Install();
             var res = await session.GetAffiliateDetails();
             Assert.IsNotNull(res);
-            
+
             string jsonActualDesc = jsonFactory.Serialize(affiliateServer.Descriptor.ApplyPolicyAccess(AuthResults.Empty));
             string jsonResponseDesc = jsonFactory.Serialize(res);
             Assert.AreEqual(jsonActualDesc, jsonResponseDesc);

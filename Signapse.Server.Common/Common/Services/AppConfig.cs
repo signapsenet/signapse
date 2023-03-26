@@ -1,16 +1,12 @@
-﻿using Signapse.BlockChain;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-
-namespace Signapse.Services
+﻿namespace Signapse.Services
 {
     /// <summary>
     /// Public app settings
     /// </summary>
     public class AppConfig
     {
-        readonly IAppDataStorage storage;
-        readonly JsonSerializerFactory JSON;
+        private readonly IAppDataStorage storage;
+        private readonly JsonSerializerFactory JSON;
 
         public string APIKey { get; set; } = string.Empty;
         public string SiteName { get; set; } = string.Empty;

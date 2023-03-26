@@ -1,5 +1,4 @@
-﻿using Signapse.Data;
-using Signapse.Services;
+﻿using Signapse.Services;
 using System;
 
 namespace Signapse.Client

@@ -6,14 +6,13 @@ using System.Net.Http.Json;
 
 namespace Signapse.Tests
 {
-    public class MockWebApp: IDisposable
+    public class MockWebApp : IDisposable
     {
-        const int DEFAULT_PORT = 45456;
-
-        readonly CancellationTokenSource ctSource = new CancellationTokenSource();
-        readonly HttpClient httpClient;
-        readonly WebApplicationBuilder builder;
-        readonly WebApplication webApp;
+        private const int DEFAULT_PORT = 45456;
+        private readonly CancellationTokenSource ctSource = new CancellationTokenSource();
+        private readonly HttpClient httpClient;
+        private readonly WebApplicationBuilder builder;
+        private readonly WebApplication webApp;
 
         public MockWebApp(Action<IServiceCollection> services, Action<WebApplication> app)
         {
@@ -43,7 +42,7 @@ namespace Signapse.Tests
             webApp.RunAsync($"http://127.0.0.1:{DEFAULT_PORT}").WaitAsync(ctSource.Token);
         }
 
-        virtual public void Dispose()
+        public virtual void Dispose()
         {
             webApp.Lifetime.StopApplication();
 

@@ -2,11 +2,10 @@
 using Signapse.Middleware;
 using Signapse.Server.Middleware;
 using Signapse.Server.Web;
-using System.Net.Http;
 
 namespace Signapse.Web
 {
-    class LocalWebServer : WebServer
+    internal class LocalWebServer : WebServer
     {
 #if DEBUG
         public WebApplication WebApp => this.webApp;

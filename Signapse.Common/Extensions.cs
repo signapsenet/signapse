@@ -1,19 +1,15 @@
-﻿using Signapse.Exceptions;
-using System.Reflection;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text.Json;
-using System.Text;
-using Newtonsoft.Json.Linq;
+﻿using System;
 using System.ComponentModel;
-using System;
 using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Signapse
 {
-    static public class StringExtensions
+    public static class StringExtensions
     {
-        static public string ToMD5_2(this string? str)
+        public static string ToMD5_2(this string? str)
         {
             using var md5 = MD5.Create();
 
@@ -32,7 +28,7 @@ namespace Signapse
             return string.Empty;
         }
 
-        static public void CopyPropertiesTo<T, U>(this T from, U to, params string[] properties)
+        public static void CopyPropertiesTo<T, U>(this T from, U to, params string[] properties)
         {
             if (properties.Length == 0)
             {
@@ -54,15 +50,15 @@ namespace Signapse
         }
     }
 
-    static public class ConverterExtensions
+    public static class ConverterExtensions
     {
-        static public TEnum ToEnum<TEnum>(this string str)
+        public static TEnum ToEnum<TEnum>(this string str)
             where TEnum : struct
         {
             return str.ToEnum<TEnum>(default(TEnum));
         }
 
-        static public TEnum ToEnum<TEnum>(this string str, TEnum defaultValue)
+        public static TEnum ToEnum<TEnum>(this string str, TEnum defaultValue)
             where TEnum : struct
         {
             return Enum.TryParse<TEnum>(str, true, out var res)
@@ -70,10 +66,10 @@ namespace Signapse
                 : defaultValue;
         }
 
-        static public object? SafeTypeConvert<T>(this object? obj)
+        public static object? SafeTypeConvert<T>(this object? obj)
             => obj.SafeTypeConvert(typeof(T));
 
-        static public object? SafeTypeConvert(this object? value, Type type)
+        public static object? SafeTypeConvert(this object? value, Type type)
         {
             object? convertedValue = null;
             if (value != null)

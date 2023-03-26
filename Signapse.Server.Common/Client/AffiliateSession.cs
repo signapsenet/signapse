@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.WebUtilities;
-using Signapse.BlockChain.Transactions;
+﻿using Signapse.BlockChain.Transactions;
 using Signapse.Data;
 using Signapse.Services;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Signapse.Client
@@ -16,8 +13,8 @@ namespace Signapse.Client
     /// </summary>
     public class AffiliateSession : HttpSession
     {
-        readonly Guid clientId;
-        readonly string apiKey;
+        private readonly Guid clientId;
+        private readonly string apiKey;
 
         public AffiliateSession(JsonSerializerFactory jsonFactory, Uri serverUri, Guid clientId, string apiKey)
             : base(jsonFactory, serverUri)

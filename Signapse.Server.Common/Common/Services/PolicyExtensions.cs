@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
-using Signapse.Data;
-using System.Security.Claims;
 
 namespace Signapse.Server.Common.Services
 {

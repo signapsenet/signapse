@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace Signapse.Server
 {
-    static class ServiceExtensions
+    internal static class ServiceExtensions
     {
-        static public IServiceCollection UniqueAddTransient<TService, TImplementation>(this IServiceCollection services)
+        public static IServiceCollection UniqueAddTransient<TService, TImplementation>(this IServiceCollection services)
             where TService : class
             where TImplementation : class, TService
         {
@@ -17,7 +17,7 @@ namespace Signapse.Server
             return services;
         }
 
-        static public IServiceCollection UniqueAddTransient<TService>(this IServiceCollection services)
+        public static IServiceCollection UniqueAddTransient<TService>(this IServiceCollection services)
             where TService : class
         {
             if (services.Any(s => s.ServiceType == typeof(TService)) == false)

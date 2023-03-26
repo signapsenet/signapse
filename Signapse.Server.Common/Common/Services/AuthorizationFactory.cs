@@ -9,7 +9,7 @@ namespace Signapse.Server.Common.Services
 {
     public class AuthorizationFactory
     {
-        readonly IServiceProvider provider;
+        private readonly IServiceProvider provider;
 
         public AuthorizationFactory(IServiceProvider provider)
             => this.provider = provider;
@@ -20,7 +20,7 @@ namespace Signapse.Server.Common.Services
 
     public class AuthResults : IAuthResults
     {
-        class EmptyAuthResults : IAuthResults
+        private class EmptyAuthResults : IAuthResults
         {
             public bool IsAuthorized => false;
             public bool IsUser => false;
@@ -28,7 +28,7 @@ namespace Signapse.Server.Common.Services
             public bool IsUsersAdmin => false;
             public bool IsAffiliatesAdmin => false;
         }
-        readonly static public IAuthResults Empty = new EmptyAuthResults();
+        public static readonly IAuthResults Empty = new EmptyAuthResults();
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         private AuthResults() { }
@@ -45,7 +45,7 @@ namespace Signapse.Server.Common.Services
         public AuthorizationResult UsersAdmin { get; private set; }
         public AuthorizationResult AffiliatesAdmin { get; private set; }
 
-        static internal async Task<IAuthResults> Create(IServiceProvider services, ClaimsPrincipal user)
+        internal static async Task<IAuthResults> Create(IServiceProvider services, ClaimsPrincipal user)
         {
             var auth = services.GetRequiredService<IAuthorizationService>();
             var policyProvider = services.GetRequiredService<IAuthorizationPolicyProvider>();

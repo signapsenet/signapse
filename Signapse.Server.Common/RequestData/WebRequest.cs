@@ -11,7 +11,7 @@ namespace Signapse.RequestData
     /// This wraps a RESTish request from a web client to either an affiliate web server or the
     /// Signapse web server
     /// </summary>
-    sealed public class WebRequest<T>
+    public sealed class WebRequest<T>
         where T : IWebRequest
     {
         public Guid ID { get; set; } = Guid.NewGuid();

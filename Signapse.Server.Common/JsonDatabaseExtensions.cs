@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Signapse.Data;
@@ -12,23 +9,21 @@ using Signapse.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Signapse.Server
 {
-    static public class JsonDatabaseExtensions
+    public static class JsonDatabaseExtensions
     {
-        readonly static HashSet<string> DB_METHODS = new HashSet<string>() { "GET", "PUT", "DELETE" };
+        private static readonly HashSet<string> DB_METHODS = new HashSet<string>() { "GET", "PUT", "DELETE" };
 
-        static public IEndpointRouteBuilder MapDatabaseEndpoint<T>(this IEndpointRouteBuilder app, string path)
+        public static IEndpointRouteBuilder MapDatabaseEndpoint<T>(this IEndpointRouteBuilder app, string path)
             where T : class, IDatabaseEntry
         {
             return app.MapDatabaseEndpoint<T, DatabaseEntryValidator<T>>(path);
         }
 
-        static public IEndpointRouteBuilder MapDatabaseEndpoint<T, TDBValidator>(this IEndpointRouteBuilder app, string path)
+        public static IEndpointRouteBuilder MapDatabaseEndpoint<T, TDBValidator>(this IEndpointRouteBuilder app, string path)
             where T : class, IDatabaseEntry
             where TDBValidator : IDatabaseEntryValidator
         {
@@ -41,7 +36,7 @@ namespace Signapse.Server
             return app;
         }
 
-        static async Task ProcessDatabaseRequest<TEntry, TDBValidator>(HttpContext context)
+        private static async Task ProcessDatabaseRequest<TEntry, TDBValidator>(HttpContext context)
             where TEntry : class, IDatabaseEntry
             where TDBValidator : IDatabaseEntryValidator
         {
@@ -172,7 +167,7 @@ namespace Signapse.Server
                     });
                 }
             }
-            catch(Exception ex) { ex.WriteTo(context.Response); }
+            catch (Exception ex) { ex.WriteTo(context.Response); }
         }
     }
 }

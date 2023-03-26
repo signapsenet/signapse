@@ -1,33 +1,17 @@
 ﻿#define CATCH_STARTUP_ERRORS
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Signapse.Data;
-using Signapse.Server.Extensions;
-using Signapse.Server.Middleware;
 using Signapse.Services;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Security.Claims;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
 
 namespace Signapse.Server.Common
 {
@@ -36,20 +20,19 @@ namespace Signapse.Server.Common
     /// 
     /// Also includes utility methods for sending requests to other signapse servers
     /// </summary>
-    abstract public class ServerBase : IDisposable
+    public abstract class ServerBase : IDisposable
     {
-        readonly protected WebApplication webApp;
-        CancellationTokenSource ctSource = new CancellationTokenSource();
-        ManualResetEvent startupCompleted = new ManualResetEvent(false);
-
-        CancellationTokenSource? ctSourceCombined;
+        protected readonly WebApplication webApp;
+        private CancellationTokenSource ctSource = new CancellationTokenSource();
+        private ManualResetEvent startupCompleted = new ManualResetEvent(false);
+        private CancellationTokenSource? ctSourceCombined;
         public Uri ServerUri { get; private set; } = new Uri("http://localhost");
 
         public Guid ID { get; } = Guid.NewGuid();
 
         protected event Action ServerStarted;
-        abstract protected void ConfigureDependencies(IServiceCollection services);
-        abstract protected void ConfigureEndpoints(WebApplication app);
+        protected abstract void ConfigureDependencies(IServiceCollection services);
+        protected abstract void ConfigureEndpoints(WebApplication app);
 
         public ServerBase(string[] args, bool anyPort = true)
         {
@@ -107,7 +90,7 @@ namespace Signapse.Server.Common
             ConfigureEndpoints(webApp);
         }
 
-        virtual public void Run(CancellationToken token)
+        public virtual void Run(CancellationToken token)
         {
             ctSourceCombined?.Cancel();
             ctSourceCombined?.Dispose();

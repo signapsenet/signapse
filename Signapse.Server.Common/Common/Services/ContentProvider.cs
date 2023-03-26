@@ -5,9 +5,7 @@ using Signapse.Data;
 using Signapse.Server.Web.Services;
 using Signapse.Services;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,7 +16,7 @@ namespace Signapse.Server.Common.Services
     /// </summary>
     public class ContentProvider
     {
-        readonly ContentDownloader downloader;
+        private readonly ContentDownloader downloader;
 
         public IReadOnlyList<ISignapseContent> CurrentContent => downloader.Content;
         public IReadOnlyList<IAffiliateDescriptor> Affiliates => downloader.Affiliates;
@@ -29,15 +27,14 @@ namespace Signapse.Server.Common.Services
         }
     }
 
-    class ContentDownloader : BackgroundService
+    internal class ContentDownloader : BackgroundService
     {
-        readonly List<ISignapseContent> _content = new List<ISignapseContent>();
-        readonly List<IAffiliateDescriptor> _affiliates = new List<IAffiliateDescriptor>();
-
-        readonly SemaphoreSlim sem = new SemaphoreSlim(1);
-        readonly WebServerConfig webConfig;
-        readonly JsonSerializerFactory jsonFactory;
-        readonly Guid serverId;
+        private readonly List<ISignapseContent> _content = new List<ISignapseContent>();
+        private readonly List<IAffiliateDescriptor> _affiliates = new List<IAffiliateDescriptor>();
+        private readonly SemaphoreSlim sem = new SemaphoreSlim(1);
+        private readonly WebServerConfig webConfig;
+        private readonly JsonSerializerFactory jsonFactory;
+        private readonly Guid serverId;
 
         public IReadOnlyList<ISignapseContent> Content
         {
@@ -104,9 +101,9 @@ namespace Signapse.Server.Common.Services
         }
     }
 
-    static public class ContentProviderExtensions
+    public static class ContentProviderExtensions
     {
-        static public IServiceCollection AddSignapseContentProvider(this IServiceCollection services)
+        public static IServiceCollection AddSignapseContentProvider(this IServiceCollection services)
         {
             services.AddSingleton(provider =>
             {

@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Signapse.BlockChain;
-using Signapse.BlockChain.Transactions;
 using Signapse.Client;
 using Signapse.Data;
 using Signapse.RequestData;
@@ -204,7 +202,7 @@ namespace Signapse.Server.Affiliate
         }
 
 
-        readonly private Dictionary<Uri, HttpClient> clients = new Dictionary<Uri, HttpClient>();
+        private readonly Dictionary<Uri, HttpClient> clients = new Dictionary<Uri, HttpClient>();
         protected HttpClient Client(Uri serverUri)
         {
             if (clients.TryGetValue(serverUri, out var client) == false)
