@@ -1,4 +1,6 @@
-﻿namespace Signapse.Exceptions
+﻿using System;
+
+namespace Signapse.Exceptions
 {
     public class UserError<T> : Exception
         where T : Exception

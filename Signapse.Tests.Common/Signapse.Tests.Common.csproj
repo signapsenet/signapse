@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Signapse.Common\Signapse.Common.csproj" />
+    <ProjectReference Include="..\Signapse.Server.Common\Signapse.Server.Common.csproj" />
   </ItemGroup>
 
 </Project>

@@ -11,9 +11,12 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text.Json;
+using System.Text;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace Signapse.Server
+namespace Signapse
 {
     static public class HttpExtensions
     {
@@ -130,6 +133,65 @@ namespace Signapse.Server
                     error = ex.Message
                 });
             }
+        }
+    }
+
+    static public class ClaimsPrincipalExtensions
+    {
+        static public T ClaimValue<T>(this ClaimsPrincipal user, string claimType)
+            where T : struct
+        {
+            return user.Claims
+                .Where(c => c.Type == claimType)
+                .Select(c => c.Value)
+                .Select(c => Enum.TryParse<T>(c, out var res) ? res : default(T))
+                .FirstOrDefault();
+        }
+
+        static public string? ClaimValue(this ClaimsPrincipal user, string claimType)
+        {
+            return user.Claims
+                .Where(c => c.Type == claimType)
+                .Select(c => c.Value)
+                .FirstOrDefault();
+        }
+
+        static public Guid SignapseUserID(this ClaimsPrincipal user)
+        {
+            if (user.Claims.FirstOrDefault(c => c.Type == Claims.UserID)?.Value is string id
+                && Guid.TryParse(id, out var guid))
+            {
+                return guid;
+            }
+            else
+            {
+                return Guid.Empty;
+            }
+        }
+    }
+
+    static public class ServerStringExtensions
+    {
+        readonly static public JsonSerializerOptions JsonOptions = new JsonSerializerOptions()
+        {
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters =
+            {
+                new BlockChain.BlockConverter(),
+                new BlockChain.TransactionConverter()
+            }
+        };
+
+        static public string Serialize<T>(this T obj)
+        {
+            try
+            {
+                return JsonSerializer.Serialize(obj, obj!.GetType(), JsonOptions);
+            }
+            catch { }
+
+            return string.Empty;
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace Signapse
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Signapse
 {
     public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
     {
