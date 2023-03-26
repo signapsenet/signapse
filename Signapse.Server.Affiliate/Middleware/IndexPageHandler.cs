@@ -87,7 +87,10 @@ namespace Signapse.Middleware
                     adminUser.RequireChangePassword = true;
                 }
 
-                await ctx.SignInAsync(AuthenticationSchemes.MemberCookie, Claims.CreatePrincipal(adminUser, AuthenticationSchemes.MemberCookie));
+                await ctx.SignInAsync(
+                    AuthenticationSchemes.AdminCookie,
+                    Claims.CreatePrincipal(adminUser, AuthenticationSchemes.AdminCookie)
+                );
             }
             else
             {

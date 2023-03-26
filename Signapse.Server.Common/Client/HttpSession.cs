@@ -12,9 +12,9 @@ namespace Signapse.Client
     /// </summary>
     public abstract class HttpSession : IDisposable
     {
-        protected readonly Uri serverUri;
+        public readonly Uri serverUri;
+        public readonly HttpClient httpClient;
         protected readonly JsonSerializerFactory jsonFactory;
-        protected readonly HttpClient httpClient;
 
         protected HttpSession(JsonSerializerFactory jsonFactory, Uri serverUri)
         {

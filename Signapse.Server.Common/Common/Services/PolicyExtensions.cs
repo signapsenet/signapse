@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 
 namespace Signapse.Server.Common.Services
 {
@@ -48,6 +49,12 @@ namespace Signapse.Server.Common.Services
                 config.AddPolicy(Policies.AffiliatesAdministrator, new AuthorizationPolicyBuilder()
                     .RequireClaim(Claims.UserID)
                     .RequireRole(Roles.Administrator, Roles.AffiliatesAdministrator)
+                    .AddAuthenticationSchemes(authSchemes)
+                    .Build());
+
+                config.AddPolicy(Policies.WebServer, new AuthorizationPolicyBuilder()
+                    .RequireClaim(Claims.UserID)
+                    .RequireRole(Roles.Administrator)
                     .AddAuthenticationSchemes(authSchemes)
                     .Build());
             });

@@ -85,8 +85,8 @@ namespace Signapse.Server.Affiliate
                 .UniqueAddTransient<IAppDataStorage, AppDataStorage>()
                 .UniqueAddTransient<ISecureStorage, SecureStorage>();
 
-            services.AddAuthentication("cookie")
-                .AddCookie("cookie", opts =>
+            services.AddAuthentication(AuthenticationSchemes.AdminCookie)
+                .AddCookie(AuthenticationSchemes.AdminCookie, opts =>
                 {
                     opts.ExpireTimeSpan = TimeSpan.FromDays(7);
                     opts.SlidingExpiration = true;
@@ -107,8 +107,7 @@ namespace Signapse.Server.Affiliate
                     opts.LoginPath = "/index.html";
                 });
 
-            services.AddAuthorization();
-            services.AddSignapseAuthorization("cookie");
+            services.AddSignapseAuthorization(AuthenticationSchemes.AdminCookie);
             services.AddSignapseOpenAuth();
         }
 
@@ -134,7 +133,7 @@ namespace Signapse.Server.Affiliate
             app.MapPut("api/v1/server/add_join_request", putJoinRequest);
             app.MapGet("/api/v1/server/desc", getDescriptor);
 
-            app.UseSignapseLedger();
+            app.UseSignapseLedger().RequireAuthorization(Policies.Administrator, Policies.WebServer);
 
             async Task getAffiliates(HttpContext context)
             {
@@ -247,18 +246,29 @@ namespace Signapse.Server.Affiliate
 
             var res = await Client(serverUri).SendAsync(request);
 
-            // Check if we need to refresh our login credentials
-            if (absPath != "/api/v1/login"
-                && (res.StatusCode == HttpStatusCode.Unauthorized
-                    || res.StatusCode == HttpStatusCode.Forbidden))
-            {
-                // TODO: save/restore login credentials for this server
-                await SendRequest(serverUri, HttpMethod.Post, "/api/v1/login", null);
+            //// Check if we need to refresh our login credentials
+            //if (absPath != "/api/v1/login"
+            //    && (res.StatusCode == HttpStatusCode.Unauthorized
+            //        || res.StatusCode == HttpStatusCode.Forbidden))
+            //{
+            //    // TODO: save/restore login credentials for this server
+            //    await SendRequest(serverUri, HttpMethod.Post, "/api/v1/login", null);
 
-                res = await Client(serverUri).SendAsync(request);
-            }
+            //    res = await Client(serverUri).SendAsync(request);
+            //}
 
             return res;
+        }
+
+        public async Task<AffiliateJoinRequest> SendAffiliateApplicationTo(SignapseWebClient session)
+        {
+            clients[session.serverUri] = session.httpClient;
+            var res = await SendRequest<AffiliateJoinRequest>(session.serverUri, HttpMethod.Post, "/api/v1/join", new
+            {
+                Data = Descriptor
+            });
+
+            return res ?? new AffiliateJoinRequest() { Status = AffiliateStatus.Rejected };
         }
 
         public async Task<AffiliateJoinRequest> SendAffiliateApplicationTo(Uri serverUri)

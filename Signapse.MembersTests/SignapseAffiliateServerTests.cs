@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Signapse.BlockChain;
 using Signapse.BlockChain.Transactions;
 using Signapse.Data;
+using System.Net;
 using UserDB = Signapse.Services.JsonDatabase<Signapse.Data.User>;
 
 namespace Signapse.Server.Tests
@@ -73,18 +75,18 @@ namespace Signapse.Server.Tests
             return joinBlock;
         }
 
-        public async Task AcceptJoinApplication(bool includeJoinTransaction = false)
+        public async Task<SignapseWebClient> AcceptJoinApplication(bool includeJoinTransaction = false)
         {
-            using var client = new SignapseWebClient(remoteServer.ServerUri);
-
-            // send the join application
-            var appResult = await localServer.SendAffiliateApplicationTo(remoteServer.ServerUri);
-            Assert.AreEqual(AffiliateStatus.Waiting, appResult.Status, "App Request Must Succeed");
+            var client = new SignapseWebClient(remoteServer.ServerUri);
 
             // accept the join application
             {
                 var loginResult = await client.Login("admin", "password");
                 Assert.AreEqual(true, loginResult, "Admin login must succeed");
+
+                // send the join application
+                var appResult = await localServer.SendAffiliateApplicationTo(client);
+                Assert.AreEqual(AffiliateStatus.Waiting, appResult.Status, "App Request Must Succeed");
 
                 var applications = await client.FetchJoinRequests();
                 Assert.AreEqual(1, applications.Length, "Only one join request must exist");
@@ -103,6 +105,8 @@ namespace Signapse.Server.Tests
                 var res = await localServer.SendTransactionTo(remoteServer.ServerUri, joinBlock);
                 Assert.AreEqual(true, res);
             }
+
+            return client;
         }
 
         [TestMethod]
@@ -133,6 +137,8 @@ namespace Signapse.Server.Tests
                 var loginResult = await client.Login("admin", "password");
                 Assert.AreEqual(true, loginResult, "Admin login must succeed");
 
+                await localServer.SendAffiliateApplicationTo(client);
+
                 var applications = await client.FetchJoinRequests();
                 Assert.AreEqual(1, applications.Length, "Only one join request must exist");
 
@@ -147,7 +153,7 @@ namespace Signapse.Server.Tests
         [TestMethod]
         public async Task Accept_Join_Request_Succeeds()
         {
-            await AcceptJoinApplication(true);
+            using var client = await AcceptJoinApplication(true);
 
             Assert.AreEqual(TransactionType.JoinAffiliate, localServer.Ledger.LastBlock.Transaction?.TransactionType);
             Assert.AreEqual(TransactionType.JoinAffiliate, remoteServer.Ledger.LastBlock.Transaction?.TransactionType);
@@ -157,7 +163,7 @@ namespace Signapse.Server.Tests
         public async Task Send_Malformed_Transaction_Fails()
         {
             // send the join request and confirm success
-            await AcceptJoinApplication(true);
+            using var client = await AcceptJoinApplication(true);
 
             {
                 var malformedBlock = new Block();
@@ -188,7 +194,7 @@ namespace Signapse.Server.Tests
         [TestMethod]
         public async Task Ledgers_Remain_Syncronized()
         {
-            await AcceptJoinApplication(true);
+            using var client = await AcceptJoinApplication(true);
 
             // send two more transactions
             for (int i = 0; i < 2; i++)
@@ -211,15 +217,45 @@ namespace Signapse.Server.Tests
         [TestMethod]
         public async Task Authorized_Admin_Web_Requests_Succeed()
         {
-            Assert.Fail("Incomplete Test");
-            await Task.CompletedTask;
+            using var client = new SignapseWebClient(remoteServer.ServerUri);
+
+            // accept the join application
+            {
+                var loginResult = await client.Login("admin", "password");
+                Assert.AreEqual(true, loginResult, "Admin login must succeed");
+
+                // send the join application
+                var appResult = await localServer.SendAffiliateApplicationTo(client);
+                Assert.AreEqual(AffiliateStatus.Waiting, appResult.Status, "App Request Must Succeed");
+
+                var applications = await client.FetchJoinRequests();
+                Assert.AreEqual(1, applications.Length, "Only one join request must exist");
+
+                var res = await client.UpdateJoinRequest(applications[0].ID, AffiliateStatus.Accepted);
+                Assert.AreEqual(true, res, "Application rejection must succeed");
+            }
         }
 
         [TestMethod]
         public async Task Unauthorized_Admin_Web_Requests_Fail()
         {
-            Assert.Fail("Incomplete Test");
-            await Task.CompletedTask;
+            using var client = new SignapseWebClient(remoteServer.ServerUri);
+
+            // send the join application
+            var appResult = await localServer.SendAffiliateApplicationTo(remoteServer.ServerUri);
+            Assert.AreEqual(AffiliateStatus.Rejected, appResult.Status, "App Request Must Fail");
+
+            // accept the join application
+            {
+                var res = await client.SendRequest(HttpMethod.Get, "/api/v1/join_requests");
+                Assert.AreEqual(HttpStatusCode.Unauthorized, res.StatusCode, "Fetch join requests must fail");
+
+                res = await client.SendRequest(HttpMethod.Put, "/api/v1/join", new
+                {
+                    Data = new { ID = Guid.Empty, Status = AffiliateStatus.Accepted }
+                });
+                Assert.AreEqual(HttpStatusCode.Unauthorized, res.StatusCode, "Application rejection must fail");
+            }
         }
     }
 }

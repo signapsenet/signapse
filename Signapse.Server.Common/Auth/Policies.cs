@@ -10,5 +10,6 @@
         public const string ContentAdministrator = "admin-content";
         public const string MembersAdministrator = "admin-members";
         public const string AffiliatesAdministrator = "admin-affiliates";
+        public const string WebServer = "web-server";
     }
 }

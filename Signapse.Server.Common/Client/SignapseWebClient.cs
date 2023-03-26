@@ -11,8 +11,8 @@ namespace Signapse.Server
     /// </summary>
     public class SignapseWebClient : IDisposable
     {
-        private readonly HttpClient httpClient;
-        private readonly Uri serverUri;
+        public readonly HttpClient httpClient;
+        public readonly Uri serverUri;
 
         public SignapseWebClient(Uri serverUri)
         {

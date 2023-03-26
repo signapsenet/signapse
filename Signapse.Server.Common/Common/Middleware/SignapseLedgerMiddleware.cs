@@ -164,7 +164,7 @@ namespace Signapse.Server.Middleware
             return services;
         }
 
-        public static WebApplication UseSignapseLedger(this WebApplication app)
+        public static IEndpointConventionBuilder UseSignapseLedger(this WebApplication app)
         {
             async Task handleRequest(HttpContext context, Func<SignapseLedgerMiddleware, Task> callback)
             {
@@ -174,14 +174,15 @@ namespace Signapse.Server.Middleware
                 await callback(middleware);
             }
 
-            app.MapPut("/api/v1/join", ctx => handleRequest(ctx, s => s.HandleJoinPut()));
-            app.MapPost("/api/v1/join", ctx => handleRequest(ctx, s => s.HandleJoinPost()));
+            return new EndpointConventionCombiner()
+            {
+                app.MapPut("/api/v1/join", ctx => handleRequest(ctx, s => s.HandleJoinPut())),
+                app.MapPost("/api/v1/join", ctx => handleRequest(ctx, s => s.HandleJoinPost())),
 
-            app.MapGet("/api/v1/join_requests", ctx => handleRequest(ctx, s => s.HandleJoinRequestGet()));
-            app.MapPut("/api/v1/transaction", ctx => handleRequest(ctx, s => s.HandleTransactionPut()));
-            app.MapGet("/api/v1/content", ctx => handleRequest(ctx, s => s.HandleContentGet()));
-
-            return app;
+                app.MapGet("/api/v1/join_requests", ctx => handleRequest(ctx, s => s.HandleJoinRequestGet())),
+                app.MapPut("/api/v1/transaction", ctx => handleRequest(ctx, s => s.HandleTransactionPut())),
+                app.MapGet("/api/v1/content", ctx => handleRequest(ctx, s => s.HandleContentGet())),
+            };
         }
     }
 

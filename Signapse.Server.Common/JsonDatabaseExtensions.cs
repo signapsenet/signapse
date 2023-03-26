@@ -17,13 +17,13 @@ namespace Signapse.Server
     {
         private static readonly HashSet<string> DB_METHODS = new HashSet<string>() { "GET", "PUT", "DELETE" };
 
-        public static IEndpointRouteBuilder MapDatabaseEndpoint<T>(this IEndpointRouteBuilder app, string path)
+        public static IEndpointConventionBuilder MapDatabaseEndpoint<T>(this IEndpointRouteBuilder app, string path)
             where T : class, IDatabaseEntry
         {
             return app.MapDatabaseEndpoint<T, DatabaseEntryValidator<T>>(path);
         }
 
-        public static IEndpointRouteBuilder MapDatabaseEndpoint<T, TDBValidator>(this IEndpointRouteBuilder app, string path)
+        public static IEndpointConventionBuilder MapDatabaseEndpoint<T, TDBValidator>(this IEndpointRouteBuilder app, string path)
             where T : class, IDatabaseEntry
             where TDBValidator : IDatabaseEntryValidator
         {
@@ -32,8 +32,7 @@ namespace Signapse.Server
                 path = $"/api/v1/{path}";
             }
 
-            app.Map($"{path}/{{id?}}", (ctx) => ProcessDatabaseRequest<T, TDBValidator>(ctx));
-            return app;
+            return app.Map($"{path}/{{id?}}", (ctx) => ProcessDatabaseRequest<T, TDBValidator>(ctx));
         }
 
         private static async Task ProcessDatabaseRequest<TEntry, TDBValidator>(HttpContext context)
