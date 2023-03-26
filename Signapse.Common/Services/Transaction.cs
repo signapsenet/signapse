@@ -31,9 +31,36 @@ namespace Signapse.Services
             deleted.Clear();
         }
 
-        public T? this[Guid id] => db[id]?.Clone();
+        public T? this[Guid id]
+        {
+            get
+            {
+                if (updated.TryGetValue(id, out var updatedItem))
+                {
+                    return updatedItem;
+                }
+                else if (inserted.FirstOrDefault(i => i.ID == id) is T insertedItem)
+                {
+                    return insertedItem;
+                }
+                else if (db[id]?.Clone() is T clonedItem)
+                {
+                    updated[id] = clonedItem;
+                    return clonedItem;
+                }
+                else
+                {
+                    return default(T);
+                }
+            }
+        }
 
-        public void Delete(Guid id) => deleted.Add(id);
+        public void Delete(Guid id)
+        {
+            inserted.RemoveAll(it => it.ID == id);
+            updated.Remove(id);
+            deleted.Add(id);
+        }
 
         public void Insert(T item) => inserted.Add(item);
 
@@ -55,6 +82,10 @@ namespace Signapse.Services
                         db.Items.Remove(item);
                     }
                 }
+
+                deleted.Clear();
+                inserted.Clear();
+                updated.Clear();
             }
 
             await db.Save();

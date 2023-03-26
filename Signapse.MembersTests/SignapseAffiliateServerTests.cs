@@ -21,8 +21,8 @@ namespace Signapse.Server.Tests
     public class SignapseAffiliateServerTests
     {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        TestServer localServer;
-        TestServer remoteServer;
+        TestAffiliateServer localServer;
+        TestAffiliateServer remoteServer;
         CancellationTokenSource ctSource;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
@@ -31,16 +31,16 @@ namespace Signapse.Server.Tests
         {
             ctSource = new CancellationTokenSource();
 
-            localServer = new TestServer();
+            localServer = new TestAffiliateServer();
             localServer.Run(ctSource.Token);
             createAdminUser(localServer);
 
-            remoteServer = new TestServer();
+            remoteServer = new TestAffiliateServer();
             remoteServer.Run(ctSource.Token);
             createAdminUser(remoteServer);
 
             // Add this user to the db
-            void createAdminUser(TestServer server)
+            void createAdminUser(TestAffiliateServer server)
             {
                 var db = server.WebApp.Services.GetRequiredService<UserDB>();
                 var hasher = server.WebApp.Services.GetRequiredService<PasswordHasher<Data.User>>();

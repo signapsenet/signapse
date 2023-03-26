@@ -68,6 +68,7 @@ namespace Signapse.Server.Affiliate
                     });
                 })
                 .AddSignapseLedger()
+                .AddSingleton<AffiliateServer>(this)
                 .AddSingleton<RSASigner>()
                 .AddSingleton<Cryptography>()
                 .AddSingleton(typeof(JsonDatabase<>))
@@ -148,18 +149,21 @@ namespace Signapse.Server.Affiliate
 
         public override void Run(CancellationToken token)
         {
+            ServerStarted += () =>
+            {
+                Descriptor.AffiliateServerUri = this.ServerUri;
+
+                ActivatorUtilities.CreateInstance<AuditAffiliates>(webApp.Services)
+                    .Start();
+
+                ActivatorUtilities.CreateInstance<ProcessMemberFees>(webApp.Services)
+                    .Start();
+
+                ActivatorUtilities.CreateInstance<ProcessAffiliateRequests>(webApp.Services)
+                    .Start();
+            };
+
             base.Run(token);
-
-            Descriptor.AffiliateServerUri = this.ServerUri;
-
-            ActivatorUtilities.CreateInstance<AuditAffiliates>(webApp.Services)
-                .Start();
-
-            ActivatorUtilities.CreateInstance<ProcessMemberFees>(webApp.Services)
-                .Start();
-
-            ActivatorUtilities.CreateInstance<ProcessAffiliateRequests>(webApp.Services)
-                .Start();
         }
 
 

@@ -1,4 +1,5 @@
 ﻿using Signapse.BlockChain;
+using Signapse.Client;
 using System;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -18,12 +19,7 @@ namespace Signapse.Server
         public SignapseWebClient(Uri serverUri)
         {
             this.serverUri = serverUri;
-
-            httpClient = new HttpClient(new SocketsHttpHandler()
-            {
-                UseCookies = true,
-                AllowAutoRedirect = false,
-            });
+            this.httpClient = HttpSession.CreateClient(false);
         }
 
         public async Task<AffiliateJoinRequest[]> FetchJoinRequests()
@@ -82,8 +78,8 @@ namespace Signapse.Server
 
         public async Task<HttpResponseMessage> SendRequest(HttpMethod method, string absPath, object? args = null)
         {
-            var url = $"http://{serverUri.Host}:{serverUri.Port}{absPath}";
-            using var request = new HttpRequestMessage(method, url);
+            var uri = new Uri(serverUri, absPath);
+            using var request = new HttpRequestMessage(method, uri);
 
             if (args != null)
             {

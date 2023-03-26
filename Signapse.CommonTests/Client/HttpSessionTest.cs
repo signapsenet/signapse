@@ -1,14 +1,19 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Signapse.Server.Tests;
+using Signapse.Server.Web.Services;
 
 namespace Signapse.Client.Tests
 {
     abstract public class HttpSessionTest<T>
         where T : HttpSession
     {
+        protected const string API_KEY = "api_key";
+
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         CancellationTokenSource ctSource;
-        protected TestServer server;
+        protected TestWebServer webServer;
+        protected TestAffiliateServer affiliateServer;
         protected T session;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
@@ -18,8 +23,16 @@ namespace Signapse.Client.Tests
         public void Initialize()
         {
             ctSource = new CancellationTokenSource();
-            server = new TestServer();
-            server.Run(ctSource.Token);
+            webServer = new TestWebServer();
+            webServer.Run(ctSource.Token);
+
+            affiliateServer = new TestAffiliateServer();
+            affiliateServer.Run(ctSource.Token);
+            affiliateServer.Descriptor.WebServerUri = webServer.ServerUri;
+
+            var webConfig = webServer.WebApp.Services.GetRequiredService<WebServerConfig>();
+            webConfig.SignapseServerUri = affiliateServer.ServerUri;
+            webConfig.SignapseServerAPIKey = API_KEY;
 
             session = CreateSession();
         }
@@ -30,9 +43,11 @@ namespace Signapse.Client.Tests
             session.Dispose();
 
             ctSource.Cancel();
-            server.WaitForShutdown();
+            webServer.WaitForShutdown();
+            affiliateServer.WaitForShutdown();
 
-            server.Dispose();
+            webServer.Dispose();
+            affiliateServer.Dispose();
             ctSource.Dispose();
         }
    }

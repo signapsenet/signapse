@@ -53,7 +53,14 @@ namespace Signapse.Services
         {
             try
             {
-                return JsonSerializer.Deserialize<T>(json, this.Options);
+                if (string.IsNullOrWhiteSpace(json))
+                {
+                    return default(T);
+                }
+                else
+                {
+                    return JsonSerializer.Deserialize<T>(json, this.Options);
+                }
             }
             catch { return default(T); }
         }

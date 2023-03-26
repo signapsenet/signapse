@@ -10,7 +10,7 @@ namespace Signapse
 {
     public class LocalAffiliateServer : AffiliateServer
     {
-        public LocalAffiliateServer(string[] args) : base(args, false)
+        public LocalAffiliateServer(string[] args, bool anyPort = false) : base(args, anyPort)
         {
         }
 

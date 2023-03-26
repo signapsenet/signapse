@@ -15,8 +15,8 @@ namespace Signapse.Client.Tests
     {
         protected override AffiliateSession CreateSession()
         {
-            var jsonFactory = server.WebApp.Services.GetRequiredService<JsonSerializerFactory>();
-            return new AffiliateSession(jsonFactory, server.ServerUri, Guid.Empty, "");
+            var jsonFactory = affiliateServer.WebApp.Services.GetRequiredService<JsonSerializerFactory>();
+            return new AffiliateSession(jsonFactory, affiliateServer.ServerUri, Guid.Empty, "");
         }
 
         [TestMethod]

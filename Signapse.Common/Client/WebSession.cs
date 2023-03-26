@@ -1,12 +1,11 @@
-﻿using Signapse.Data;
-using Signapse.Services;
+﻿using Signapse.Services;
 
 namespace Signapse.Client
 {
     /// <summary>
-    /// Communication paths from clients to Signapse endpoints
+    /// Communication endpoints from clients to the site's Webserver
     /// </summary>
-    public partial class WebSession : HttpSession
+    public partial class WebSession: HttpSession
     {
         public WebSession(JsonSerializerFactory jsonFactory, Uri signapseUri)
             : base(jsonFactory, signapseUri)

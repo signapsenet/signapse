@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore;
+﻿#define CATCH_STARTUP_ERRORS
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
@@ -39,12 +40,14 @@ namespace Signapse.Server.Common
     {
         readonly protected WebApplication webApp;
         CancellationTokenSource ctSource = new CancellationTokenSource();
+        ManualResetEvent startupCompleted = new ManualResetEvent(false);
 
         CancellationTokenSource? ctSourceCombined;
         public Uri ServerUri { get; private set; } = new Uri("http://localhost");
 
         public Guid ID { get; } = Guid.NewGuid();
 
+        protected event Action ServerStarted;
         abstract protected void ConfigureDependencies(IServiceCollection services);
         abstract protected void ConfigureEndpoints(WebApplication app);
 
@@ -58,6 +61,7 @@ namespace Signapse.Server.Common
                     .UseUrls($"https://{IPAddress.Loopback}:0");
             }
 
+            builder.WebHost.CaptureStartupErrors(true);
             ConfigureDependencies(builder.Services);
 
             builder.Services
@@ -74,6 +78,12 @@ namespace Signapse.Server.Common
 
             webApp = builder.Build();
 
+            webApp.Lifetime.ApplicationStarted.Register(() =>
+            {
+                ServerStarted?.Invoke();
+                startupCompleted?.Set();
+            });
+
             // Configure the HTTP request pipeline.
             if (!webApp.Environment.IsDevelopment())
             {
@@ -81,6 +91,18 @@ namespace Signapse.Server.Common
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 webApp.UseHsts();
             }
+
+            ServerStarted += () =>
+            {
+                // Get the full uri that was used for startup
+                if ((webApp as IApplicationBuilder)?.ServerFeatures is FeatureCollection features
+                    && features.Get<IServerAddressesFeature>() is IServerAddressesFeature addrFeature)
+                {
+                    ServerUri = new Uri(addrFeature.Addresses
+                        .OrderBy(a => a.StartsWith("https:") ? 0 : 1)
+                        .First());
+                }
+            };
 
             ConfigureEndpoints(webApp);
         }
@@ -100,21 +122,28 @@ namespace Signapse.Server.Common
                 ctSourceCombined = ctSource;
             }
 
-            webApp.RunAsync(ctSourceCombined.Token);
-            //webApp.Run(); // Uncomment to determine why server is disposed
+            startupCompleted?.Dispose();
+            startupCompleted = new ManualResetEvent(false);
 
-            if ((webApp as IApplicationBuilder)?.ServerFeatures is FeatureCollection features
-                && features.Get<IServerAddressesFeature>() is IServerAddressesFeature addrFeature)
+#if CATCH_STARTUP_ERRORS
+            Task.Run(async () =>
             {
-                ServerUri = new Uri(addrFeature.Addresses
-                    .OrderBy(a => a.StartsWith("https:") ? 0 : 1)
-                    .First());
-            }
+                await webApp.RunAsync(ctSourceCombined.Token);
+            }, ctSourceCombined.Token);
+#else
+            webApp.RunAsync(ctSourceCombined.Token);
+#endif
+
+            startupCompleted.WaitOne();
         }
 
         public void WaitForShutdown()
         {
-            webApp.WaitForShutdown();
+            try
+            {
+                webApp.WaitForShutdown();
+            }
+            catch (ObjectDisposedException) { }
         }
 
         public void Dispose()

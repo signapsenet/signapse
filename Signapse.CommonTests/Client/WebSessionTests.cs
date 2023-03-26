@@ -15,12 +15,12 @@ using System.Threading.Tasks;
 namespace Signapse.Client.Tests
 {
     [TestClass]
-    public class WebSessionTests : HttpSessionTest<WebSession>
+    public class WebSessionTests : HttpSessionTest<SignapseWebSession>
     {
-        protected override WebSession CreateSession()
+        protected override SignapseWebSession CreateSession()
         {
-            var jsonFactory = server.WebApp.Services.GetRequiredService<JsonSerializerFactory>();
-            return new WebSession(jsonFactory, server.ServerUri);
+            var jsonFactory = affiliateServer.WebApp.Services.GetRequiredService<JsonSerializerFactory>();
+            return new SignapseWebSession(jsonFactory, affiliateServer.ServerUri);
         }
 
         // User details and site configuration
@@ -48,38 +48,38 @@ namespace Signapse.Client.Tests
         AffiliateJoinRequest[] JoinRequestsToAdd => _joinRequestsToAdd = _joinRequestsToAdd ?? new AffiliateJoinRequest[]
         {
             new () {
-                Descriptor = server.Descriptor,
+                Descriptor = affiliateServer.Descriptor,
                 FromServerID = OtherServerID,
-                ToServerID = server.Descriptor.ID,
+                ToServerID = affiliateServer.Descriptor.ID,
                 Status = AffiliateStatus.Waiting
             },
             new () {
-                Descriptor = server.Descriptor,
+                Descriptor = affiliateServer.Descriptor,
                 FromServerID = OtherServerID,
-                ToServerID = server.Descriptor.ID,
+                ToServerID = affiliateServer.Descriptor.ID,
                 Status = AffiliateStatus.Waiting
             },
             new () {
-                Descriptor = server.Descriptor,
+                Descriptor = affiliateServer.Descriptor,
                 FromServerID = OtherServerID,
-                ToServerID = server.Descriptor.ID,
+                ToServerID = affiliateServer.Descriptor.ID,
                 Status = AffiliateStatus.Accepted
             },
             new () {
-                Descriptor = server.Descriptor,
+                Descriptor = affiliateServer.Descriptor,
                 FromServerID = OtherServerID,
-                ToServerID = server.Descriptor.ID,
+                ToServerID = affiliateServer.Descriptor.ID,
                 Status = AffiliateStatus.Rejected
             },
             new () {
-                Descriptor = server.Descriptor,
-                FromServerID = server.Descriptor.ID,
+                Descriptor = affiliateServer.Descriptor,
+                FromServerID = affiliateServer.Descriptor.ID,
                 ToServerID = OtherServerID,
                 Status = AffiliateStatus.Waiting
             },
             new () {
-                Descriptor = server.Descriptor,
-                FromServerID = server.Descriptor.ID,
+                Descriptor = affiliateServer.Descriptor,
+                FromServerID = affiliateServer.Descriptor.ID,
                 ToServerID = OtherServerID,
                 Status = AffiliateStatus.Waiting
             },
@@ -87,7 +87,7 @@ namespace Signapse.Client.Tests
 
         void AddJoinRequests()
         {
-            var db = server.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
+            var db = affiliateServer.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
             foreach (var jr in JoinRequestsToAdd)
             {
                 db.Items.Add(jr);
@@ -99,8 +99,8 @@ namespace Signapse.Client.Tests
         {
             await Install();
 
-            var jsonFactory = server.WebApp.Services.GetRequiredService<JsonSerializerFactory>();
-            var appConfig = server.WebApp.Services.GetRequiredService<AppConfig>();
+            var jsonFactory = affiliateServer.WebApp.Services.GetRequiredService<JsonSerializerFactory>();
+            var appConfig = affiliateServer.WebApp.Services.GetRequiredService<AppConfig>();
             var expectedSmtp = jsonFactory.Serialize(smtp);
             var actualSmtp = jsonFactory.Serialize(appConfig.SMTP);
 
@@ -122,7 +122,7 @@ namespace Signapse.Client.Tests
         {
             await Install();
 
-            var dbUser = server.WebApp.Services.GetRequiredService<JsonDatabase<Data.User>>();
+            var dbUser = affiliateServer.WebApp.Services.GetRequiredService<JsonDatabase<Data.User>>();
             var adminUser = dbUser[Data.User.PrimaryAdminGU];
 
             Assert.IsNotNull(adminUser);
@@ -133,7 +133,7 @@ namespace Signapse.Client.Tests
         public async Task Update_Configuration_Updates_AppConfig()
         {
             const string apiKey = "!@#API_KEY_103";
-            var appConfig = server.WebApp.Services.GetRequiredService<AppConfig>();
+            var appConfig = affiliateServer.WebApp.Services.GetRequiredService<AppConfig>();
             
             await Install();
             await session.SaveSiteConfig(apiKey);
@@ -144,7 +144,7 @@ namespace Signapse.Client.Tests
         [TestMethod]
         public async Task AcceptAllRequests_Accepts_Only_Waiting_Requests_To_Server()
         {
-            var db = server.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
+            var db = affiliateServer.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
             
             await Install();
             AddJoinRequests();
@@ -156,7 +156,7 @@ namespace Signapse.Client.Tests
         [TestMethod]
         public async Task RejectAllRequests_Rejects_Only_Waiting_Requests_To_Server()
         {
-            var db = server.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
+            var db = affiliateServer.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
             
             await Install();
             AddJoinRequests();
@@ -168,7 +168,7 @@ namespace Signapse.Client.Tests
         [TestMethod]
         public async Task AcceptRequest_Accepts_Only_Indicated_Request()
         {
-            var db = server.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
+            var db = affiliateServer.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
             
             await Install();
             AddJoinRequests();
@@ -182,7 +182,7 @@ namespace Signapse.Client.Tests
         [TestMethod]
         public async Task RejectRequest_Rejects_Only_Indicated_Request()
         {
-            var db = server.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
+            var db = affiliateServer.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
             
             await Install();
             AddJoinRequests();
@@ -215,13 +215,13 @@ namespace Signapse.Client.Tests
         [TestMethod]
         public async Task Get_Affiliate_Details_Matches_Server_Descriptor()
         {
-            var jsonFactory = server.WebApp.Services.GetRequiredService<JsonSerializerFactory>();
+            var jsonFactory = affiliateServer.WebApp.Services.GetRequiredService<JsonSerializerFactory>();
             
             await Install();
             var res = await session.GetAffiliateDetails();
             Assert.IsNotNull(res);
             
-            string jsonActualDesc = jsonFactory.Serialize(server.Descriptor.ApplyPolicyAccess(AuthResults.Empty));
+            string jsonActualDesc = jsonFactory.Serialize(affiliateServer.Descriptor.ApplyPolicyAccess(AuthResults.Empty));
             string jsonResponseDesc = jsonFactory.Serialize(res);
             Assert.AreEqual(jsonActualDesc, jsonResponseDesc);
         }
@@ -240,10 +240,10 @@ namespace Signapse.Client.Tests
         public async Task AddAffiliate_Creates_Join_Requests()
         {
             using var ctSource = new CancellationTokenSource();
-            using var remoteServer = new TestServer();
+            using var remoteServer = new TestAffiliateServer();
             remoteServer.Run(ctSource.Token);
 
-            var db = server.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
+            var db = affiliateServer.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
             var remoteDB = remoteServer.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
 
             await Install();
@@ -259,10 +259,10 @@ namespace Signapse.Client.Tests
         public async Task AddAffiliate_Accepts_Only_Local_Join_Request()
         {
             using var ctSource = new CancellationTokenSource();
-            using var remoteServer = new TestServer();
+            using var remoteServer = new TestAffiliateServer();
             remoteServer.Run(ctSource.Token);
 
-            var db = server.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
+            var db = affiliateServer.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
             var remoteDB = remoteServer.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
 
             await Install();
@@ -280,10 +280,10 @@ namespace Signapse.Client.Tests
         public async Task AddAffiliate_Returns_Waiting_Request()
         {
             using var ctSource = new CancellationTokenSource();
-            using var remoteServer = new TestServer();
+            using var remoteServer = new TestAffiliateServer();
             remoteServer.Run(ctSource.Token);
 
-            var db = server.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
+            var db = affiliateServer.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
             var remoteDB = remoteServer.WebApp.Services.GetRequiredService<JsonDatabase<AffiliateJoinRequest>>();
 
             await Install();

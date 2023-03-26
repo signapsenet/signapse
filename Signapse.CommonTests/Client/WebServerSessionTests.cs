@@ -15,8 +15,8 @@ namespace Signapse.Client.Tests
     {
         protected override WebServerSession CreateSession()
         {
-            var jsonFactory = server.WebApp.Services.GetRequiredService<JsonSerializerFactory>();
-            return new WebServerSession(jsonFactory, server.ServerUri);
+            var jsonFactory = affiliateServer.WebApp.Services.GetRequiredService<JsonSerializerFactory>();
+            return new WebServerSession(jsonFactory, webServer.ServerUri);
         }
 
         [TestMethod]

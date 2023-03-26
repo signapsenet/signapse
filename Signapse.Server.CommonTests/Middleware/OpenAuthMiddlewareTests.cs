@@ -18,14 +18,14 @@ namespace Signapse.Server.Middleware.Tests
         {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
             private HttpClient _httpClient;
-            private TestServer _server;
+            private TestAffiliateServer _server;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
             [TestInitialize]
             public void TestInitialize()
             {
                 _httpClient = new HttpClient();
-                _server = new TestServer();
+                _server = new TestAffiliateServer();
             }
 
             [TestMethod]

@@ -12,6 +12,10 @@ namespace Signapse.Server.Tests
 {
     public class TestWebServer : WebServer
     {
+#if DEBUG
+        public WebApplication WebApp => this.webApp;
+#endif
+
         public TestWebServer(): base(new string[0])
         {
         }

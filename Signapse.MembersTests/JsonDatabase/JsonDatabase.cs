@@ -20,7 +20,7 @@ namespace Signapse.ServerTests.JsonDatabase
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         CancellationTokenSource ctSource;
         protected SignapseWebClient HttpClient { get; private set; }
-        protected TestServer Server { get; private set; }
+        protected TestAffiliateServer Server { get; private set; }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         [TestInitialize]
@@ -28,7 +28,7 @@ namespace Signapse.ServerTests.JsonDatabase
         {
             ctSource = new CancellationTokenSource();
 
-            Server = new TestServer();
+            Server = new TestAffiliateServer();
             Server.Run(ctSource.Token);
 
             HttpClient = new SignapseWebClient(Server.ServerUri);

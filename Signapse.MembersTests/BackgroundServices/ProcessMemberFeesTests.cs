@@ -31,6 +31,7 @@ namespace Signapse.BackgroundServices.Tests
                 .AddSingleton<ISecureStorage, MockStorage>()
                 .AddSingleton<SignapseLedger>()
                 .AddSingleton(typeof(JsonDatabase<>))
+                .AddScoped(typeof(Transaction<>))
                 .AddTransient<JsonSerializerFactory>()
                 .AddTransient<PaymentProcessor>();
 
@@ -67,7 +68,7 @@ namespace Signapse.BackgroundServices.Tests
             ReplyTo = adminEmail,
         };
 
-        async Task<TestServer[]> PrepareAffiliates()
+        async Task<TestAffiliateServer[]> PrepareAffiliates()
         {
             string[] serverNames = { "Alice", "Joe", "Jordan" };
 
@@ -82,7 +83,7 @@ namespace Signapse.BackgroundServices.Tests
             foreach (var aff in servers.Values)
             {
                 var jsonFactory = aff.WebApp.Services.GetRequiredService<JsonSerializerFactory>();
-                using var client = new WebSession(jsonFactory, aff.ServerUri);
+                using var client = new SignapseWebSession(jsonFactory, aff.ServerUri);
 
                 var res = await client.Install(smtp, siteName, networkName, adminEmail, adminPassword);
                 Assert.AreEqual(true, res.IsSuccessStatusCode);
@@ -129,7 +130,7 @@ namespace Signapse.BackgroundServices.Tests
             
             // Log into the source server
             var jsonFactory = sourceServer.WebApp.Services.GetRequiredService<JsonSerializerFactory>();
-            using (var session = new WebSession(jsonFactory, sourceServer.ServerUri))
+            using (var session = new SignapseWebSession(jsonFactory, sourceServer.ServerUri))
             {
                 await session.Login(member.ID, "password", memberServer.Descriptor.WebServerUri);
             }
@@ -244,7 +245,7 @@ namespace Signapse.BackgroundServices.Tests
         public Task RunTest() => this.Process(CancellationToken.None);
     }
 
-    public class MemberFeeTestServer : TestServer
+    public class MemberFeeTestServer : TestAffiliateServer
     {
         public string Name { get; }
         public Data.Member[] Members { get; } = { };

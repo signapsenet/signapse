@@ -42,7 +42,7 @@ namespace Signapse.Middleware
             var joinRequest = request.Data ?? throw new Exceptions.HttpBadRequest("Invalid Request");
 
             // Send a request to the original server to verify the request originated there
-            using var session = new WebSession(jsonFactory, joinRequest.Descriptor.AffiliateServerUri);
+            using var session = new SignapseWebSession(jsonFactory, joinRequest.Descriptor.AffiliateServerUri);
             var origJoinRequest = await session.Get<AffiliateJoinRequest>("affiliate_request", joinRequest.ID);
             if (origJoinRequest == null)
                 throw new Exceptions.HttpBadRequest("Invalid Request");

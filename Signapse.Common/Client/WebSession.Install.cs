@@ -6,7 +6,7 @@ namespace Signapse.Client
     /// <summary>
     /// Communication paths from clients to Signapse endpoints
     /// </summary>
-    public partial class WebSession : HttpSession
+    public partial class SignapseWebSession : HttpSession
     {
         public Task<HttpResponseMessage> Install(AppConfig.SMTPOptions smtp, string siteName, string networkName, string adminEmail, string adminPassword)
         {

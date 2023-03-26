@@ -147,7 +147,7 @@ namespace Signapse.Middleware
         public async Task<AdminDataModel.AffiliateRequest?> AddAffiliate(WebRequest<AdminDataModel> request)
         {
             var data = request.Data ?? throw new Exceptions.HttpBadRequest("Invalid Request");
-            using var session = new WebSession(jsonFactory, new Uri(data.AffiliateRequestUrl));
+            using var session = new SignapseWebSession(jsonFactory, new Uri(data.AffiliateRequestUrl));
 
             if (await session.GetAffiliateDetails() is SignapseServerDescriptor remoteServer)
             {

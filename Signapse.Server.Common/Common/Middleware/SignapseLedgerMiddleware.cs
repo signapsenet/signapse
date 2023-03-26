@@ -93,11 +93,11 @@ namespace Signapse.Server.Middleware
                 ?? throw new Exceptions.HttpBadRequest("Invalid Request");
 
             var status = joinRequest.Status;
-            joinRequest = joinRequests.FirstOrDefault(jr => jr.ID == joinRequest.ID)
+            joinRequest = joinRequests[joinRequest.ID]
                 ?? throw new Exceptions.HttpBadRequest("Invalid Request");
 
             joinRequest.Status = status;
-            
+
             await joinRequests.Commit();
         }
 
