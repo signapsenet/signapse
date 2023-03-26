@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Signapse.BlockChain\Signapse.BlockChain.csproj" />
     <ProjectReference Include="..\Signapse.Common\Signapse.Common.csproj" />
     <ProjectReference Include="..\Signapse.Server.Common\Signapse.Server.Common.csproj" />
   </ItemGroup>

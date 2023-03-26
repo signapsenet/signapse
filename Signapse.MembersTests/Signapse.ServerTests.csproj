@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Signapse.Affiliate\Signapse.Affiliate.csproj" />
+    <ProjectReference Include="..\Signapse.Server.Affiliate\Signapse.Server.Affiliate.csproj" />
     <ProjectReference Include="..\Signapse.Server.Common\Signapse.Server.Common.csproj" />
     <ProjectReference Include="..\Signapse.Tests.Common\Signapse.Tests.Common.csproj" />
   </ItemGroup>

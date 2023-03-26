@@ -11,11 +11,9 @@ Signapse is a protocol for a collection of like-minded sites to share content an
 
 ## Project Structure
 
-The *Signapse.Web* project is the code base used by **Signapse.net**. It is provided primarily for transparency, but you are encouraged to use whatever site design and functionality you prefer. This is where all of your member data will be located. Essential pieces of data, such as fee account info and user name, will need to be pushed to YOUR affiliate server and no one else.
+The *Signapse.Server.Web* project is the code base used by **Signapse.net**. It is provided primarily for transparency, but you are encouraged to use whatever site design and functionality you prefer. This is where all of your member data will be located. Essential pieces of data, such as fee account info and user name, will need to be pushed to YOUR affiliate server and no one else.
 
-The *Signapse.Affiliate* project is the primary service for the network.  These nodes process transactions and synchronize data with each of the other affiliates.
-
-The *Signapse.BlockChain* project is a library for managing a transactional blockchain.  In Signapse the currency is time, and the time spent from your members and affiliates' members watching your shared content is considered when collecting and distributing a member's fee.
+The *Signapse.Server.Affiliate* project is the primary service for the network.  These nodes process transactions and synchronize data with each of the other affiliates.
 
 The *Signapse.Server.Common* and *Signapse.Common* libraries contain the bulk of the functionality that would be required by anyone wishing to implement their own version of the protocol.
 

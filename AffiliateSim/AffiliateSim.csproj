@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Signapse.BlockChain\Signapse.BlockChain.csproj" />
     <ProjectReference Include="..\Signapse.Common\Signapse.Common.csproj" />
     <ProjectReference Include="..\Signapse\Signapse.Affiliate.csproj" />
   </ItemGroup>
