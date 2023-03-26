@@ -32,9 +32,6 @@ namespace Signapse
             app.MapWebRequestHandler<AdminPageHandler, AdminDataModel>(HttpMethod.Get, "/api/v1/admin/generateAPIKey", (handler) => handler.GenerateAPIKey());
             app.MapWebRequestHandler<AdminPageHandler, AdminDataModel>(HttpMethod.Post, "/api/v1/admin/acceptAllRequests", (handler) => handler.AcceptAllRequests());
             app.MapWebRequestHandler<AdminPageHandler, AdminDataModel>(HttpMethod.Post, "/api/v1/admin/rejectAllRequests", (handler) => handler.RejectAllRequests());
-
-            app.MapWebRequestHandler<ServerPageHandler, AffiliateJoinRequest>(HttpMethod.Put, "/api/v1/server/add_join_request", (handler, adminData) => handler.AddJoinRequest(adminData));
-            app.MapWebRequestHandler<ServerPageHandler, ServerDataModel>(HttpMethod.Get, "/api/v1/server/desc", (handler) => handler.GetDescriptor());
         }
     }
 }

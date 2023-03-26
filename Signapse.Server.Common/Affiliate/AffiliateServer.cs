@@ -7,6 +7,7 @@ using Signapse.BlockChain;
 using Signapse.BlockChain.Transactions;
 using Signapse.Client;
 using Signapse.Data;
+using Signapse.RequestData;
 using Signapse.Server.Common;
 using Signapse.Server.Common.BackgroundServices;
 using Signapse.Server.Common.Services;
@@ -131,20 +132,56 @@ namespace Signapse.Server.Affiliate
             //app.MapDatabaseEndpoint<Data.AffiliateDescriptor>("affiliate");
             app.MapDatabaseEndpoint<AffiliateJoinRequest, AffiliateJoinRequestValidator>("affiliate_request");
 
-            app.MapGet("/api/v1/affiliates", async ctx =>
-            {
-                var dbAffiliates = ctx.RequestServices.GetRequiredService<JsonDatabase<SignapseServerDescriptor>>();
+            app.MapGet("/api/v1/affiliates", getAffiliates);
+            app.MapPut("api/v1/server/add_join_request", putJoinRequest);
+            app.MapGet("/api/v1/server/desc", getDescriptor);
 
-                await ctx.Response.WriteAsJsonAsync(new
+            app.UseSignapseLedger();
+
+            async Task getAffiliates(HttpContext context)
+            {
+                var dbAffiliates = context.RequestServices.GetRequiredService<JsonDatabase<SignapseServerDescriptor>>();
+
+                await context.Response.WriteAsJsonAsync(new
                 {
                     Result = dbAffiliates
                         .Items
                         .OfType<IAffiliateDescriptor>()
                         .ToArray()
                 });
-            });
+            }
 
-            app.UseSignapseLedger();
+            Task<SignapseServerDescriptor> getDescriptor(HttpContext context)
+            {
+                return Task.FromResult(this.Descriptor.ApplyPolicyAccess(AuthResults.Empty));
+            }
+
+            async Task<AffiliateJoinRequest> putJoinRequest(HttpContext context, Transaction<AffiliateJoinRequest> joinRequests, JsonSerializerFactory jsonFactory)
+            {
+                var request = context.Read<WebRequest<AffiliateJoinRequest>>() ?? throw new Exceptions.HttpBadRequest("Invalid Request");
+                var joinRequest = request.Data ?? throw new Exceptions.HttpBadRequest("Invalid Request");
+
+                // Send a request to the original server to verify the request originated there
+                using var session = new SignapseWebSession(jsonFactory, joinRequest.Descriptor.AffiliateServerUri);
+                var origJoinRequest = await session.Get<AffiliateJoinRequest>("affiliate_request", joinRequest.ID);
+                if (origJoinRequest == null)
+                    throw new Exceptions.HttpBadRequest("Invalid Request");
+
+                // Verify there isn't already a pending transaction
+                if (joinRequests[request.ID] != null)
+                    throw new Exceptions.HttpBadRequest("Invalid Request");
+
+                // Add the affiliate to the list of affiliates
+                origJoinRequest.Status = AffiliateStatus.Waiting;
+                joinRequests.Insert(origJoinRequest);
+
+                // TODO: Relay this request to all other servers in the network
+                _ = Task.Run(() =>
+                {
+                });
+
+                return origJoinRequest;
+            }
         }
 
         public override void Run(CancellationToken token)

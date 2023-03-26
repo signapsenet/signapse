@@ -31,16 +31,16 @@
 
 ## Signapse.net Creator Site
 * [X] OpenAuth login to other affiliates
-* [ ] Add test posts for each test server
-* [ ] AffiliateSession authorization
-* [ ] Filter search results
-* [ ] Page search results
+* [X] Add test posts for each test server
+* [X] AffiliateSession authorization
 * [ ] View post content (perma-links)
     * [ ] Log seconds per post
         * [ ] Short text: 1 minute
         * [ ] Long text: 5 minutes
         * [ ] Video: 15 second increments while streaming
         * [ ] Audio: 15 second increments while streaming
+* [ ] Filter search results
+* [ ] Page search results
 * [ ] Clean up code
 * [ ] Create primary logo and icon
 * [ ] Restyle UI
