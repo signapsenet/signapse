@@ -75,7 +75,8 @@ namespace Signapse.Tests
                 await ctx.SignInAsync(Claims.CreatePrincipal(user, "cookie"));
             });
 
-            app.MapDatabaseEndpoint<Data.User, Data.UserValidator>("/api/v1/user");
+            app.MapDatabaseEndpoint<Data.User, Data.UserValidator>("/api/v1/user")
+                .RequireAuthorization(Policies.User);
 
             additional?.Invoke(app);
         }

@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.StaticFiles;
+using Signapse.Server.Middleware;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Signapse.Server.Common.Services
 {
@@ -13,33 +16,44 @@ namespace Signapse.Server.Common.Services
     /// </summary>
     public class EmbeddedResourceLoader
     {
-        private readonly Assembly asm;
-        private readonly string webRootPath;
-        private readonly string prefix;
+        private readonly EmbeddedResourceOptions options;
         private readonly FileExtensionContentTypeProvider extProvider = new FileExtensionContentTypeProvider();
 
-        // Makes debugging easier if we just load from disk, when possible
-        private static readonly Dictionary<string, string[]> ContentFiles = new Dictionary<string, string[]>();
-
-        public EmbeddedResourceLoader(Assembly asm, IWebHostEnvironment env)
-            : this(asm, string.Empty, env)
+        static string[] AllSourceFiles = { };
+        static string GetFilePath([CallerFilePath] string filePath = "") { return filePath; }
+        static EmbeddedResourceLoader()
         {
+#if DEBUG
+            // Store the list of source files for debug, so we don't have to recompile
+            if (GetFilePath() is string filePath)
+            {
+                int idx = filePath.IndexOf("Signapse\\", StringComparison.OrdinalIgnoreCase);
+                if (idx != -1)
+                {
+                    string[] validExtensions = { ".js", ".css", ".html" };
+                    AllSourceFiles = Directory.EnumerateFiles(filePath.Substring(0, idx + 8), "*", SearchOption.AllDirectories)
+                        .Where(f => validExtensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
+                        .ToArray();
+                }
+            }
+#endif
         }
 
-        public EmbeddedResourceLoader(Assembly asm, string prefix, IWebHostEnvironment env)
+        public EmbeddedResourceLoader(EmbeddedResourceOptions options)
         {
-            this.webRootPath = env.WebRootPath ?? env.ContentRootPath;
-            this.prefix = prefix;
-            this.asm = asm;
+            this.options = options;
+        }
 
-            // Cache all the files from the path for this web folder
-            if (ContentFiles.ContainsKey(this.webRootPath) == false)
+        static readonly Dictionary<Assembly, string[]> AssemblyResourceNames = new Dictionary<Assembly, string[]>();
+        private string[] ResourceNames()
+        {
+            if (AssemblyResourceNames.TryGetValue(options.Assembly, out var res) == false)
             {
-                ContentFiles[this.webRootPath] = Directory
-                    .EnumerateFiles(this.webRootPath, "*.*", SearchOption.AllDirectories)
-                    .OrderBy(s => s.Length)
-                    .ToArray();
+                res = options.Assembly.GetManifestResourceNames();
+                AssemblyResourceNames[options.Assembly] = res;
             }
+
+            return res;
         }
 
         /// <summary>
@@ -49,13 +63,15 @@ namespace Signapse.Server.Common.Services
         /// <returns></returns>
         public Stream? LoadStream(string path, out string contentType)
         {
-            var truncatedPath = TruncatePath(prefix + path);
-            var resName = asm.GetManifestResourceNames() // TODO: Cache the resource names (performance?)
+            // Find the closest matching resource name
+            var truncatedPath = TruncatePath(options.ResourcePath + path);
+            var resName = ResourceNames()
                 .Where(r => TruncatePath(r).EndsWith(truncatedPath, StringComparison.OrdinalIgnoreCase))
                 .FirstOrDefault();
 
             // Grab the content type
-            if (!extProvider.TryGetContentType(Path.GetFileName(path), out contentType))
+            if (!extProvider.TryGetContentType(Path.GetFileName(path), out contentType!)
+                || contentType == null)
             {
                 contentType = "application/octet-stream";
             }
@@ -69,7 +85,7 @@ namespace Signapse.Server.Common.Services
                 }
                 else
 #endif
-                    return asm.GetManifestResourceStream(resName);
+                    return options.Assembly.GetManifestResourceStream(resName);
             }
 
             return null;
@@ -77,15 +93,15 @@ namespace Signapse.Server.Common.Services
 
         private string? FindFile(string truncatedPath)
         {
-            if (ContentFiles.TryGetValue(this.webRootPath, out var files))
+            if (options.Assembly.GetName().Name is string asmName)
             {
-                return files
-                    .FirstOrDefault(f => TruncatePath(f).EndsWith(truncatedPath, StringComparison.OrdinalIgnoreCase));
+                return AllSourceFiles
+                    .Where(f => f.Contains(asmName, StringComparison.OrdinalIgnoreCase))
+                    .Where(f => TruncatePath(f).EndsWith(truncatedPath, StringComparison.OrdinalIgnoreCase))
+                    .FirstOrDefault();
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         private string TruncatePath(string str)

@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="wwwroot\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Signapse.Common\Signapse.Common.csproj" />
   </ItemGroup>
 

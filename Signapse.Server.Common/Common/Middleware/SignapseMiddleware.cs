@@ -19,12 +19,10 @@ namespace Signapse.Server.Middleware
             {
                 // HACK: We need a more elegant solution here
                 path = path.TrimEnd('/') + '/' + defaultPath.TrimStart('/');
-                context.Response.Redirect(path);
+                context.Request.Path = path;
             }
-            else
-            {
-                await next(context);
-            }
+
+            await next(context);
         }
     }
 

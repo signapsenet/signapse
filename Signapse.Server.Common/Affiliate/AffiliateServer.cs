@@ -125,9 +125,10 @@ namespace Signapse.Server.Affiliate
 
             app.UseSignapseOpenAuth();
 
-            app.MapDatabaseEndpoint<User, UserValidator>("user");
-            //app.MapDatabaseEndpoint<Data.AffiliateDescriptor>("affiliate");
-            app.MapDatabaseEndpoint<AffiliateJoinRequest, AffiliateJoinRequestValidator>("affiliate_request");
+            app.MapDatabaseEndpoint<User, UserValidator>("user")
+                .RequireAuthorization(Policies.User);
+            app.MapDatabaseEndpoint<AffiliateJoinRequest, AffiliateJoinRequestValidator>("affiliate_request")
+                .RequireAuthorization(Policies.User);
 
             app.MapGet("/api/v1/affiliates", getAffiliates);
             app.MapPut("api/v1/server/add_join_request", putJoinRequest);

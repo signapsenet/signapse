@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Signapse.Server.Middleware;
 using Signapse.Services;
 using System;
 using System.Linq;
@@ -88,6 +89,8 @@ namespace Signapse.Server.Common
             };
 
             ConfigureEndpoints(webApp);
+
+            webApp.UseEmbeddedResources(config => config.Assembly = typeof(ServerBase).Assembly);
         }
 
         public virtual void Run(CancellationToken token)

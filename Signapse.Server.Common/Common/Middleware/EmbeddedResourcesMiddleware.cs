@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Signapse.Server.Common.Services;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -17,28 +18,31 @@ namespace Signapse.Server.Middleware
     {
         private readonly EmbeddedResourceLoader resLoader;
         private readonly RequestDelegate next;
-        private readonly Assembly asm;
+        private readonly EmbeddedResourceOptions opts;
 
-        public EmbeddedResourcesMiddleware(RequestDelegate next, Assembly asm, IWebHostEnvironment env)
+        public EmbeddedResourcesMiddleware(RequestDelegate next, EmbeddedResourceOptions opts, IWebHostEnvironment env)
         {
-            resLoader = new EmbeddedResourceLoader(asm, env);
+            resLoader = new EmbeddedResourceLoader(opts);
             this.next = next;
-            this.asm = asm;
+            this.opts = opts;
         }
 
         public async Task Invoke(HttpContext httpContext)
         {
             string path = httpContext.Request.Path;
 
-            // Find the closest matching resource name
-            var truncatedPath = TruncatePath(path);
-            var resName = asm.GetManifestResourceNames()
-                .Where(r => TruncatePath(r).EndsWith(truncatedPath, StringComparison.OrdinalIgnoreCase))
-                .FirstOrDefault();
+            // Limit the request to the defined root path
+            if (path.StartsWith(opts.VirtualPath) == false)
+            {
+                await next(httpContext);
+                return;
+            }
+
+            // TODO: Add caching checks (based on asm/file dates)
+            
 
             // Fetch the content
-            if (resName != null
-                && resLoader.LoadStream(resName, out var contentType) is Stream stream)
+            if (resLoader.LoadStream(path, out var contentType) is Stream stream)
             {
                 httpContext.Response.RegisterForDispose(stream);
 
@@ -56,11 +60,36 @@ namespace Signapse.Server.Middleware
             => str.Replace("\\", "").Replace("/", "").Replace(".", "");
     }
 
+    /// <summary>
+    /// Configuration for EmbeddedResourceMiddleware
+    /// </summary>
+    public class EmbeddedResourceOptions
+    {
+        /// <summary>
+        /// The assembly that contains the embedded resources
+        /// </summary>
+        public Assembly Assembly { get; set; } = typeof(EmbeddedResourcesMiddleware).Assembly;
+
+        /// <summary>
+        /// The root path in the assembly
+        /// </summary>
+        public string ResourcePath { get; set; } = "wwwroot";
+
+        /// <summary>
+        /// The web root for the resources
+        /// </summary>
+        public string VirtualPath { get; set; } = "/";
+    }
+
     public static class EmbeddedResourcesExtensions
     {
-        public static IApplicationBuilder UseEmbeddedResources(this IApplicationBuilder builder, Assembly asm)
+        public static IApplicationBuilder UseEmbeddedResources(this IApplicationBuilder builder, Action<EmbeddedResourceOptions> config)
         {
-            return builder.UseMiddleware<EmbeddedResourcesMiddleware>(asm);
+            EmbeddedResourceOptions options = new EmbeddedResourceOptions();
+            config(options);
+
+            options.VirtualPath = options.VirtualPath.TrimEnd('/');
+            return builder.UseMiddleware<EmbeddedResourcesMiddleware>(options);
         }
     }
 }

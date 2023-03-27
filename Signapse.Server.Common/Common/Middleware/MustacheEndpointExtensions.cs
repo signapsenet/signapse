@@ -74,7 +74,12 @@ namespace Signapse.Server.Middleware
             {
                 if (template == null)
                 {
-                    EmbeddedResourceLoader resLoader = new EmbeddedResourceLoader(options.ResourceAssembly, env);
+                    EmbeddedResourceLoader resLoader = new EmbeddedResourceLoader(new EmbeddedResourceOptions()
+                    {
+                        ResourcePath = "",
+                        Assembly = options.ResourceAssembly
+                    });
+
                     using var stream = resLoader.LoadStream(path, out contentType)
                         ?? throw new Exception($"Unable to locate resource {options.ResourceAssembly.FullName}: {path}");
 

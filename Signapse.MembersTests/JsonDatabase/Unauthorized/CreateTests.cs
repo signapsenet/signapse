@@ -13,7 +13,7 @@ namespace Signapse.Server.JsonDatabase.Unauthorized
         {
             using var res = await HttpClient.SendRequest(HttpMethod.Put, "/api/v1/user", CreateValidUser());
 
-            Assert.AreEqual(HttpStatusCode.Forbidden, res.StatusCode);
+            Assert.AreEqual(HttpStatusCode.Unauthorized, res.StatusCode);
         }
 
         [TestMethod]
@@ -21,7 +21,7 @@ namespace Signapse.Server.JsonDatabase.Unauthorized
         {
             using var res = await HttpClient.SendRequest(HttpMethod.Put, "/api/v1/user", new User());
 
-            Assert.AreEqual(HttpStatusCode.Forbidden, res.StatusCode);
+            Assert.AreEqual(HttpStatusCode.Unauthorized, res.StatusCode);
         }
 
         // This is not possible.  Inserting an existing user is just an update request

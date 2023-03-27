@@ -84,9 +84,6 @@ namespace Signapse.Server.Web
             });
 
             app.UseDefaultPath("index.html");
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
-
             app.UseSignapseOpenAuth();
 
             app.MapGet("/api/v1/content", async ctx =>
